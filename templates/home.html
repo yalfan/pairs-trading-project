@@ -3,10 +3,57 @@
     <body>
         {% extends "layout.html" %}
         {% block content %}
-          <div class="home">
-            <h1>A Python product</h1>
-            <p>This website was built with Python via the Flask framework.</p>
+        <div class="container">
+            <div class="card grey lighten-4">
+              <div class="card-content">
+
+                <span class="card-title">
+                  <h1>Pairs Trading Program</h1>
+                </span>
+
+                <div class="row">
+                  <form method="POST">
+                    <select id="crypto_name" name="crypto_name" required>
+                      <option value="" disabled selected>Select currency 1</option>
+                      <option value="Bitcoin">Bitcoin</option>
+                      <option value="Etherium">Etherium</option>
+                      <option value="Binance">Binance</option>
+                      <option value="Doge">Doge</option>
+                    </select>
+
+                    <div class="row">
+                        <div class="input-field col s6">
+                          <select id="crypto_name_2" name="crypto_name_2" required>
+                            <option value="" disabled selected>Select currency 2</option>
+                            <option value="Bitcoin">Bitcoin</option>
+                            <option value="Etherium">Etherium</option>
+                            <option value="Binance">Binance</option>
+                            <option value="Doge">Doge</option>
+                          </select>
+                        </div>
+
+                    </div>
+
+
+                    <div class="row">
+                        <div class="input-field col s6">
+                          <select id="program" name="program" required>
+                            <option value="" disabled selected>Select a program</option>
+                            <option value="Backtest">Backtest</option>
+                            <option value="Analyze">Analyze</option>
+                            <option value="Graph">Graph</option>
+                          </select>
+                        </div>
+
+                    </div>
+
+                  <button>Submit</button>
+
+                  </form>
+                </div>
+            </div>
           </div>
+        </div>
         {% endblock %}
     </body>
 </html>

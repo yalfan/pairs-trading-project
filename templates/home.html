@@ -1,57 +1,51 @@
 <!DOCTYPE html>
-<html>
-    <body>
-        {% extends "layout.html" %}
-        {% block content %}
-        <div class="container">
-            <div class="card grey lighten-4">
-              <div class="card-content">
+<html lang="en">
 
-                <span class="card-title">
-                  <h1>Pairs Trading Program</h1>
-                </span>
+<head>
+    <title>Pairs Trading Program</title>
 
-                <div class="row">
-                  <form method="POST">
-                    <select id="crypto_name" name="crypto_name" required>
-                      <option value="" disabled selected>Select currency 1</option>
-                      <option value="Bitcoin">Bitcoin</option>
-                      <option value="Ethereum">Ethereum</option>
-                      <option value="Doge">Doge</option>
-                    </select>
+    <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
+</head>
 
-                    <div class="row">
-                        <div class="input-field col s6">
-                          <select id="crypto_name_2" name="crypto_name_2" required>
-                            <option value="" disabled selected>Select currency 2</option>
-                            <option value="Bitcoin">Bitcoin</option>
-                            <option value="Ethereum">Ethereum</option>
-                            <option value="Doge">Doge</option>
-                          </select>
-                        </div>
+<body>
+{% extends "layout.html" %}
+{% block content %}
 
-                    </div>
+    <h1>Pairs Trading Program</h1>
+
+    <div class="home">
+    <form method="POST">
+
+    <select id="crypto_name" name="crypto_name" required>
+    <option value="" disabled selected>Select currency 1</option>
+    <option value="Bitcoin">Bitcoin</option>
+    <option value="Ethereum">Ethereum</option>
+    <option value="Doge">Doge</option>
+    </select>
 
 
-                    <div class="row">
-                        <div class="input-field col s6">
-                          <select id="program" name="program" required>
-                            <option value="" disabled selected>Select a program</option>
-                            <option value="Backtest">Backtest</option>
-                            <option value="Analyze">Analyze</option>
-                            <option value="Graph">Graph</option>
-                          </select>
-                        </div>
+    <select id="crypto_name_2" name="crypto_name_2" required>
+    <option value="" disabled selected>Select currency 2</option>
+    <option value="Bitcoin">Bitcoin</option>
+    <option value="Ethereum">Ethereum</option>
+    <option value="Doge">Doge</option>
+    </select>
 
-                    </div>
 
-                  <button>Submit</button>
 
-                  </form>
-                </div>
-            </div>
-          </div>
-        </div>
-        {% endblock %}
-    </body>
+
+    <select id="program" name="program" required>
+    <option value="" disabled selected>Select a program</option>
+    <option value="Backtest">Backtest</option>
+    <option value="Analyze">Analyze</option>
+    <option value="Graph">Graph</option>
+    </select>
+
+
+    <button>Submit</button>
+
+    </form>
+    </div>
+{% endblock %}
+</body>
 </html>

@@ -1,21 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-<!-- Required meta tags -->
-<meta charSet="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-{% if title %}
-<title>{{ title }}</title>
-{% else %}
-<title>Results</title>
-{% endif %}
-<!--Chart.js JS CDN-->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js"></script>
-</head>
+    <head>
+    {% if title %}
+    <title>{{ title }}</title>
+    {% else %}
+    <title>Results</title>
+    {% endif %}
+    <!--Chart.js JS CDN-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js"></script>
+    </head>
 
-<body>
-{% extends "layout.html" %}
-{% block content %}
+    <body>
+    {% extends "layout.html" %}
+    {% block content %}
 
     {% if title %}
     <h1>{{ title }}</h1>
@@ -23,39 +20,344 @@
     <h1>Results</h1>
     {% endif %}
 
-    <canvas id="myChart" style="width:100%;max-width:800px;height:100%;max-height;700"></canvas>
+    {% if program == "Graph" %}
+    <canvas id="myChart2" ></canvas>
+
+    <script>
+    var ctx = document.getElementById('myChart2').getContext('2d');
+    var myChart2 = new Chart(document.getElementById("myChart2"), {
+        type: 'line',
+        data: {
+        labels: {{ labels|tojson }},
+        datasets: [
+            {
+            data: {{ values1|tojson }},
+            label: {{ crypto_one|tojson }},
+            borderColor: "#3e95cd",
+            fill: false
+            }]
+        },
+        options: {
+            legend: { display: true },
+            title: {
+            display: true,
+            text: 'Price History of {{ crypto_one|tojson }}'
+            }}
+    });
+    </script>
+
+    <canvas id="myChart3" ></canvas>
+
+    <script>
+    var ctx = document.getElementById('myChart3').getContext('2d');
+    var myChart2 = new Chart(document.getElementById("myChart3"), {
+        type: 'line',
+        data: {
+        labels: {{ labels|tojson }},
+        datasets: [
+            {
+            data: {{ values2|tojson }},
+            label: {{ crypto_two|tojson }},
+            borderColor: "#e8c3b9",
+            fill: false
+            }]
+        },
+        options: {
+            legend: { display: true },
+            title: {
+            display: true,
+            text: 'Price History of {{ crypto_two|tojson }}'
+            }}
+    });
+    </script>
+
+    <canvas id="myChart" ></canvas>
 
     <script>
     var ctx = document.getElementById('myChart').getContext('2d');
     var myChart = new Chart(document.getElementById("myChart"), {
-    type: 'line',
-    data: {
-    labels: {{ labels|tojson }},
-    datasets: [
-    {
-    label: {{ crypto_one|tojson }},
-    borderColor: "#3e95cd",
-    data: {{ values1|tojson }},
-    fill: false
-    },
-    {
-    data: {{ values2|tojson }},
-    label: {{ crypto_two|tojson }},
-    borderColor: "#e8c3b9",
-    fill: false
-    }
-    ]
-    },
-    options: {
-    legend: { display: false },
-    title: {
-    display: true,
-    text: 'Price History of {{ crypto_one|tojson }} and {{ crypto_two|tojson }}'
-    }
-    }
+        type: 'line',
+        data: {
+        labels: {{ labels|tojson }},
+        datasets: [
+            {
+            data: {{ values1|tojson }},
+            label: {{ crypto_one|tojson }},
+            borderColor: "#3e95cd",
+            fill: false
+            },
+            {
+            data: {{ values2|tojson }},
+            label: {{ crypto_two|tojson }},
+            borderColor: "#e8c3b9",
+            fill: false
+            }]
+        },
+        options: {
+            legend: { display: true },
+            title: {
+            display: true,
+            text: 'Price History of {{ crypto_one|tojson }} and {{ crypto_two|tojson }}'
+            }}
     });
     </script>
-{% endblock %}
 
-</body>
+    {% elif program == "Analyze" %}
+    <h2>Price Analysis</h2>
+    <div class="row">
+        <div class="box">
+        <h3>Long {{ crypto_one|tojson }} / Short {{ crypto_two|tojson }}</h3>
+        <p>Median CAGR %:-10.72</p>
+        <p>Worst CAGR %:-24.75</p>
+        <p>Best CAGR %:19.02</p>
+        <p>Average CAGR %:-8.80</p>
+        <p>CAGR Standard Deviation %:11.43</p>
+        </div>
+        <canvas id="scatterChart1"></canvas>
+        <script>
+            var ctx = document.getElementById("scatterChart1").getContext('2d');
+
+            // Define the data
+
+            var data = [{
+                x: 5,
+                y: 4
+            }, {
+                x: 2,
+                y: 14
+            },
+            {
+                x: 4,
+                y: 12
+            },
+            {
+                x: 2,
+                y: 10
+            },
+            {
+                x: 3,
+                y: 4
+            },
+            {
+                x: 3,
+                y: 5
+            },
+            {
+                x: 3,
+                y: 8
+            },
+            {
+                x: 6,
+                y: 12
+
+            }];// Add data values to array
+            // End Defining data
+            var options = {responsive: true, // Instruct chart js to respond nicely.
+                maintainAspectRatio: false, // Add to prevent default behaviour of full-width/height
+            };
+
+            // End Defining data
+            var myChart = new Chart(ctx, {
+            type: 'scatter',
+            data: {
+                datasets: [{
+                        label: 'Profit Analysis (Long {{crypto_one|tojson}} / Short {{crypto_two|tojson}})', // Name the series
+                        data: data, // Specify the data values array
+                  borderColor: '#2196f3', // Add custom color border
+                  backgroundColor: '#2196f3', // Add custom color background (Points and Fill)}]
+            },
+            options: options
+            });
+        </script>
+
+    </div>
+    <div class="row">
+        <div class="box">
+        <h3>Long Only</h3>
+        <p>Median CAGR %:-10.72</p>
+        <p>Worst CAGR %:-24.75</p>
+        <p>Best CAGR %:19.02</p>
+        <p>Average CAGR %:-8.80</p>
+        <p>CAGR Standard Deviation %:11.43</p>
+        </div>
+        <canvas id="scatterChart2"></canvas>
+        <script>
+            var ctx = document.getElementById("scatterChart2").getContext('2d');
+
+            // Define the data
+
+            var data = [{
+                x: 5,
+                y: 4
+            }, {
+                x: 2,
+                y: 14
+            },
+            {
+                x: 4,
+                y: 12
+            },
+            {
+                x: 2,
+                y: 10
+            },
+            {
+                x: 3,
+                y: 4
+            },
+            {
+                x: 3,
+                y: 5
+            },
+            {
+                x: 3,
+                y: 8
+            },
+            {
+                x: 6,
+                y: 12
+
+            }];// Add data values to array
+            // End Defining data
+            var options = {responsive: true, // Instruct chart js to respond nicely.
+                maintainAspectRatio: false, // Add to prevent default behaviour of full-width/height
+            };
+
+            // End Defining data
+            var myChart = new Chart(ctx, {
+            type: 'scatter',
+            data: {
+                datasets: [{
+                        label: 'Profit Analysis (Long Only)', // Name the series
+                        data: data, // Specify the data values array
+                  borderColor: '#2196f3', // Add custom color border
+                  backgroundColor: '#2196f3', // Add custom color background (Points and Fill)
+                    }]
+            },
+            options: options
+            });
+        </script>
+
+    </div>
+    <div class="row">
+        <div class="box">
+        <h3>Short Only</h3>
+        <p>Median CAGR %:-10.72</p>
+        <p>Worst CAGR %:-24.75</p>
+        <p>Best CAGR %:19.02</p>
+        <p>Average CAGR %:-8.80</p>
+        <p>CAGR Standard Deviation %:11.43</p>
+        </div>
+        <canvas id="scatterChart3"></canvas>
+        <script>
+            var ctx = document.getElementById("scatterChart3").getContext('2d');
+
+            // Define the data
+
+            var data = [{
+                x: 5,
+                y: 4
+            }, {
+                x: 2,
+                y: 14
+            },
+            {
+                x: 4,
+                y: 12
+            },
+            {
+                x: 2,
+                y: 10
+            },
+            {
+                x: 3,
+                y: 4
+            },
+            {
+                x: 3,
+                y: 5
+            },
+            {
+                x: 3,
+                y: 8
+            },
+            {
+                x: 6,
+                y: 12
+
+            }];// Add data values to array
+            // End Defining data
+            var options = {responsive: true, // Instruct chart js to respond nicely.
+                maintainAspectRatio: false, // Add to prevent default behaviour of full-width/height
+            };
+
+            // End Defining data
+            var myChart = new Chart(ctx, {
+            type: 'scatter',
+            data: {
+                datasets: [{
+                        label: 'Profit Analysis (Short Only)', // Name the series
+                        data: data, // Specify the data values array
+                  borderColor: '#2196f3', // Add custom color border
+                  backgroundColor: '#2196f3', // Add custom color background (Points and Fill)
+                    }]
+            },
+            options: options
+            });
+        </script>
+    </div>
+
+    {% elif program == "Backtest" %}
+    <div class="row">
+        <div class="longbox">
+        <p>Initial Capital:	10000.00</p>
+        <p>Total net P/L: -8817.60</p>
+        <p>CAGR: -30.32 %</p>
+        <p>System Score: -16.884</p>
+        <p>Start Date: {{ startdate }}</p>
+        <p>End Date: {{ enddate }}</p>
+        <p>Commissions:	332.66</p>
+        <p>Total Transactions: 332</p>
+        <p>Final Equity: 1182.40</p>
+        <p>Total ROI: -88.18 %</p>
+        </div>
+        <canvas id="equityGraph"></canvas>
+        <script>
+        var ctx = document.getElementById('equityGraph').getContext('2d');
+        var myChart = new Chart(document.getElementById("equityGraph"), {
+            type: 'line',
+            data: {
+            labels: {{ labels|tojson }},
+            datasets: [
+                {
+                data: {{ values1|tojson }},
+                label: {{ crypto_one|tojson }},
+                borderColor: "#3e95cd",
+                fill: false
+                },
+                {
+                data: {{ values2|tojson }},
+                label: {{ crypto_two|tojson }},
+                borderColor: "#e8c3b9",
+                fill: false
+                }]
+            },
+            options: {
+                legend: { display: true },
+                title: {
+                display: true,
+                text: 'Price History of {{ crypto_one|tojson }} and {{ crypto_two|tojson }}'
+                }}
+        });
+    </script>
+
+    </div>
+
+
+
+    {% endif %}
+
+    {% endblock %}
+
+    </body>
 </html>

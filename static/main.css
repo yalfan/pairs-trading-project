@@ -26,22 +26,6 @@ header h1.logo:hover {
   text-decoration: none;
 }
 
-select {
-  width: 30%;
-  padding: 12px 20px;
-  font-size: medium;
-}
-
-button {
-  background-color: #DFB887;
-  border: none;
-  color: white;
-  padding: 12px 24px;
-  text-decoration: none;
-  font-size: medium;
-  margin: 4px 2px;
-  cursor: pointer;
-}
 
 /*
  * Centering the body content
@@ -65,20 +49,8 @@ div.about {
           border-radius: 6px;
 }
 
-h1 {
-  font-size: 2em;
-  margin-top: 20px;
-  text-align: left;
-  letter-spacing: -2px;
-}
 
-h2 {
-  font-size: 3em;
-  margin-top: 40px;
-  text-align: center;
-  letter-spacing: -2px;
-}
-h3 {
+h5 {
   font-size: 1.7em;
   font-weight: 100;
   margin-top: 30px;
@@ -100,3 +72,104 @@ h3 {
   color: #444;
   text-decoration: none;
 }
+
+
+/*Custom stuff*/
+
+
+select {
+  width: 30%;
+  padding: 12px 20px;
+  font-size: 1em;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+button {
+  background-color: #DFB887;
+  border: none;
+  color: white;
+  padding: 12px 24px;
+  text-decoration: none;
+  font-size: medium;
+  margin: 4px 2px;
+  cursor: pointer;
+}
+
+h1 {
+  font-size: 2em;
+  margin-top: 20px;
+  text-align: left;
+  letter-spacing: -2px;
+}
+
+h2 {
+  font-size: 1.7em;
+  margin-top: 20px;
+  text-align: left;
+  letter-spacing: -2px;
+}
+
+h3 {
+  font-size: 1.3em;
+  margin-top: 20px;
+  text-align: left;
+  letter-spacing: -2px;
+}
+
+label {
+  font-size: .8em;
+  margin-top: 20px;
+  text-align: left;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-weight: bold;
+}
+
+
+
+/*padding: top right bottom left*/
+.box {
+  box-shadow: 0 3px 3px rgba(0,0,0,0.2);
+  width: 220px;
+  height: 300px;
+  text-align: left;
+  padding: 5px 10px 10px 10px;
+  border-style: solid;
+  border-width: 2px;
+  margin: 25px;
+  float: left;
+}
+
+.longbox {
+  box-shadow: 0 3px 3px rgba(0,0,0,0.2);
+  width: 220px;
+  height: 400px;
+  text-align: left;
+  padding: 5px 10px 10px 10px;
+  border-style: solid;
+  border-width: 2px;
+  margin: 25px;
+  float: left;
+}
+
+p {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: medium;
+  color: #444;
+  font-weight: 600;
+}
+
+
+.row {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+#startdate, #enddate {
+  width: 25%;
+  padding: 10px 15px;
+  font-size: 1em;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+
+}
+

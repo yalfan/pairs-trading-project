@@ -1,22 +1,5 @@
-from flask import Flask, request
-from datetime import datetime
+from pymongo import MongoClient
 
-app = Flask(__name__)
+client = MongoClient(port=27017)
 
-
-@app.route('/')
-def hello():
-    name = request.args['name']
-    return HELLO_HTML.format(
-        name, str(datetime.now()))
-
-
-HELLO_HTML = """
-    <html><body>
-        <h1>Hello, {0}!</h1>
-        The time is {1}.
-    </body></html>"""
-
-if __name__ == "__main__":
-    # Launch the Flask dev server
-    app.run(host="localhost", debug=True)
+mydb=client.mydb

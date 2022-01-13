@@ -1,4 +1,6 @@
 from flask import Flask, render_template, request
+import numpy
+from pymongo import MongoClient
 import json
 app = Flask(__name__)
 
@@ -33,7 +35,6 @@ def create_scatter_data(crypto_values):
     scatter_data = []
     for i in range(len(labels)):
         temp = [labels[i], crypto_values[i]]
-        print(temp)
         scatter_data.append(temp)
     return scatter_data
 
@@ -58,11 +59,12 @@ def results(crypto_one, crypto_two, program, startdate, enddate):
             c1 = i
         if crypto_two == cryptos[i]:
             c2 = i
-
+    correlation = round(numpy.corrcoef(crypto_values[c1], crypto_values[c2])[1, 0], 3)
     return render_template('results.html', title=title, crypto_one=crypto_one, crypto_two=crypto_two, program=program,
                            labels=labels, values1=crypto_values[c1], values2=crypto_values[c2],
                            scatter1=create_scatter_data(crypto_values[c1]),
-                           scatter2=create_scatter_data(crypto_values[c2]), startdate=startdate, enddate=enddate)
+                           scatter2=create_scatter_data(crypto_values[c2]), startdate=startdate, enddate=enddate,
+                           correlation=correlation)
 
 
 @app.route('/', methods=['POST'])

@@ -1,13 +1,15 @@
+import pandas as pd
 from pymongo import MongoClient
+import datetime
 
-client = MongoClient(port=27017)
+sheet = pd.read_csv('data/gemini_BTCUSD_day.csv')
+
+client = MongoClient("mongodb+srv://yalfan22:yale2004@cluster0.qszrw.mongodb.net/test")
 
 db = client.pairs_trading
 
 btc = db.btc
 
-data = {
-    "Date": 1/9/2022, "High":42782.58, "Low":41214.24, "Volume":688.35
-}
+date = sheet.at[10, 'Date'].replace(" 4:00", "").replace("/", " ")
 
-db.btc.insert_one(data)
+print(datetime.datetime.strptime(btc.find_one({"Date": date})["Date"], "%m %d %Y").date())

@@ -46,7 +46,7 @@ def create_scatter_data(crypto_values):
 
 @app.route('/')
 def home():
-    return render_template('home.html')
+    return render_template('home.html', now='{d.year}-{d.month}-{d.day}'.format(d=datetime.datetime.now().date()))
 
 
 @app.route('/about/')
@@ -67,13 +67,14 @@ def results(crypto_one, crypto_two, program, startdate, enddate):
 
     dates = get_dates(startdate, enddate)
     values1 = get_data(dates)
-    # incorporate start and end date into get_dates and get_data
-    # incorporate get_data into values1 and 2
+    # incorporate start and end date into get_dates and get_data DONE
+    # incorporate get_data into values1 and 2 DONE
     return render_template('results.html', title=title, crypto_one=crypto_one, crypto_two=crypto_two, program=program,
-                           labels=dates, values1=values1, values2=crypto_values[c2],
-                           scatter1=create_scatter_data(crypto_values[c1]),
-                           scatter2=create_scatter_data(crypto_values[c2]), startdate=startdate, enddate=enddate,
-                           correlation=correlation)
+                           labels=dates, values1=values1, values2=crypto_values[c2], startdate=startdate, enddate=enddate,
+                           correlation=correlation, now='{d.year}-{d.month}-{d.day}'.format(d=datetime.datetime.now().date())
+)
+    #  scatter1=create_scatter_data(crypto_values[c1]),
+    #  scatter2=create_scatter_data(crypto_values[c2]),
 
 
 @app.route('/', methods=['POST'])

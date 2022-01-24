@@ -70,7 +70,7 @@ def results(crypto_one, crypto_two, program, startdate, enddate):
     # incorporate start and end date into get_dates and get_data
     # incorporate get_data into values1 and 2
     return render_template('results.html', title=title, crypto_one=crypto_one, crypto_two=crypto_two, program=program,
-                           labels=labels, values1=values1, values2=crypto_values[c2],
+                           labels=dates, values1=values1, values2=crypto_values[c2],
                            scatter1=create_scatter_data(crypto_values[c1]),
                            scatter2=create_scatter_data(crypto_values[c2]), startdate=startdate, enddate=enddate,
                            correlation=correlation)

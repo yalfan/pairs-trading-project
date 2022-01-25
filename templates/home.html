@@ -41,13 +41,47 @@
         <label>Start Period:</label>
         <input type="date" id="startdate" name="startdate"
            value="2021-12-06"
-           min="2016-01-01">
+           min="2016-01-01" max="<?= date('Y-m-d'); ?>">
+        <script>
+            var today = new Date();
+            var dd = today.getDate();
+            var mm = today.getMonth() + 1; //January is 0!
+            var yyyy = today.getFullYear();
+
+            if (dd < 10) {
+               dd = '0' + dd;
+            }
+
+            if (mm < 10) {
+               mm = '0' + mm;
+            }
+
+            today = yyyy + '-' + mm + '-' + dd;
+            document.getElementById("startdate").setAttribute("max", today);
+        </script>
             <!-- change min and max to automatically update -->
 
         <label>End Period</label>
         <input type="date" id="enddate" name="enddate"
            value="2021-12-06"
-           min="2016-01-01">
+           min="2016-01-01" max="<?= date('Y-m-d'); ?>">
+        <script>
+            var today = new Date();
+            var dd = today.getDate();
+            var mm = today.getMonth() + 1; //January is 0!
+            var yyyy = today.getFullYear();
+
+            if (dd < 10) {
+               dd = '0' + dd;
+            }
+
+            if (mm < 10) {
+               mm = '0' + mm;
+            }
+
+            today = yyyy + '-' + mm + '-' + dd;
+            document.getElementById("enddate").setAttribute("max", today);
+        </script>
 
         <button>Submit</button>
 

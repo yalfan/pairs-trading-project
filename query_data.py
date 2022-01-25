@@ -31,3 +31,10 @@ def get_data(dates):
         average_prices.append(average_price)
     return average_prices
 
+
+def get_dates_string_daily(dates):
+    string_dates = []
+    for i in range(len(dates)):
+        string_dates.append('{d.month}-{d.day}-{d.year}'.format(d=dates[i]))
+    return string_dates
+

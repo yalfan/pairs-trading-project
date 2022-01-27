@@ -7,7 +7,7 @@
     <title>Results</title>
     {% endif %}
     <!--Chart.js JS CDN-->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     </head>
 
     <body>
@@ -34,7 +34,8 @@
             data: {{ values1|tojson }},
             label: {{ crypto_one|tojson }},
             borderColor: "#3e95cd",
-            fill: false
+            fill: false,
+            tension: 0.4
             }]
         },
         options: {
@@ -59,7 +60,8 @@
             data: {{ values2|tojson }},
             label: {{ crypto_two|tojson }},
             borderColor: "#e8c3b9",
-            fill: false
+            fill: false,
+            tension: 0.4
             }]
         },
         options: {
@@ -75,24 +77,24 @@
 
     <script>
     var ctx = document.getElementById('myChart').getContext('2d');
-    var myChart = new Chart(ctx, {
+    new Chart(ctx, {
         type: 'line',
         data: {
-        labels: {{ labels|tojson }},
-        datasets: [
-            {
-            data: {{ values1|tojson }},
-            label: {{ crypto_one|tojson }},
-            yAxisId: 'A',
-            borderColor: "#3e95cd",
-            fill: false
-            },
-            {
-            data: {{ values2|tojson }},
-            label: {{ crypto_two|tojson }},
-            yAxisId: 'B',
-            borderColor: "#e8c3b9",
-            fill: false
+            labels: {{ labels|tojson }},
+            datasets: [{
+                data: {{ values1|tojson }},
+                label: {{ crypto_one|tojson }},
+                yAxisId: 'A',
+                borderColor: "#3e95cd",
+                fill: false,
+                tension: 0.4
+            }, {
+                label: {{ crypto_two|tojson }},
+                yAxisID: 'B',
+                data: {{ values2|tojson }},
+                borderColor: "#e8c3b9",
+                fill: false,
+                tension: 0.4
             }]
         },
         options: {
@@ -101,28 +103,24 @@
             display: true,
             text: 'Price History of {{ crypto_one|tojson }} and {{ crypto_two|tojson }}'
             },
-            interaction: {
-              mode: 'index',
-              intersect: false,
-            },
             scales: {
                 A: {
                     type: 'linear',
-                    display: true,
                     position: 'left',
                 },
                 B: {
                     type: 'linear',
-                    display: true,
                     position: 'right',
                     ticks: {
                         max: 1,
                         min: 0
+                    },
+                    grid: {
+                      drawOnChartArea: false, // only want the grid lines for one axis to show up
                     }
                 }
             }
         }
-
     });
     </script>
 

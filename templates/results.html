@@ -50,7 +50,7 @@
 
     <script>
     var ctx = document.getElementById('myChart3').getContext('2d');
-    var myChart2 = new Chart(document.getElementById("myChart3"), {
+    var myChart2 = new Chart(ctx, {
         type: 'line',
         data: {
         labels: {{ labels|tojson }},
@@ -75,7 +75,7 @@
 
     <script>
     var ctx = document.getElementById('myChart').getContext('2d');
-    var myChart = new Chart(document.getElementById("myChart"), {
+    var myChart = new Chart(ctx, {
         type: 'line',
         data: {
         labels: {{ labels|tojson }},
@@ -83,12 +83,14 @@
             {
             data: {{ values1|tojson }},
             label: {{ crypto_one|tojson }},
+            yAxisId: 'A',
             borderColor: "#3e95cd",
             fill: false
             },
             {
             data: {{ values2|tojson }},
             label: {{ crypto_two|tojson }},
+            yAxisId: 'B',
             borderColor: "#e8c3b9",
             fill: false
             }]
@@ -98,7 +100,29 @@
             title: {
             display: true,
             text: 'Price History of {{ crypto_one|tojson }} and {{ crypto_two|tojson }}'
-            }}
+            },
+            interaction: {
+              mode: 'index',
+              intersect: false,
+            },
+            scales: {
+                A: {
+                    type: 'linear',
+                    display: true,
+                    position: 'left',
+                },
+                B: {
+                    type: 'linear',
+                    display: true,
+                    position: 'right',
+                    ticks: {
+                        max: 1,
+                        min: 0
+                    }
+                }
+            }
+        }
+
     });
     </script>
 

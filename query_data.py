@@ -6,6 +6,10 @@ client = MongoClient("mongodb+srv://yalfan22:yale2004@cluster0.qszrw.mongodb.net
 db = client.pairs_trading
 
 btc = db.btc
+eth = db.eth
+ltc = db.ltc
+bch = db.bch
+xrp = db.xrp
 
 
 def get_dates(date1, date2):
@@ -23,11 +27,18 @@ def get_dates(date1, date2):
     return dates
 
 
-def get_data(dates):
+def get_data(dates, coin_string):
+    coin = {
+        "Bitcoin": btc,
+        "Ethereum": eth,
+        "Litecoin": ltc,
+        "BitCash": bch,
+        "XRP": xrp
+    }[coin_string]
     average_prices = []
     for i in range(len(dates)):
         date = '{d.month} {d.day} {d.year}'.format(d=dates[i])
-        average_price = btc.find_one({"Date": date})["Average"]
+        average_price = coin.find_one({"Date": date})["Average"]
         average_prices.append(average_price)
     return average_prices
 

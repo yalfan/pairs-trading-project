@@ -6,7 +6,15 @@ import json
 
 from query_data import *
 
+client = MongoClient("mongodb+srv://yalfan22:yale2004@cluster0.qszrw.mongodb.net/test")
 
+db = client.pairs_trading
+
+btc = db.btc
+eth = db.eth
+ltc = db.ltc
+bch = db.bch
+xrp = db.xrp
 
 app = Flask(__name__)
 
@@ -16,32 +24,12 @@ labels = [
     'SEP', 'OCT', 'NOV', 'DEC'
 ]
 
-# bitcoin
-bitcoinValues = [
-    7188.46, 9388.66, 8540.26, 6671.95, 8771.57, 9564.95, 9153.95, 11354.16, 11964.21, 10626.60, 13762.97, 18795.20]
-
-# ether
-etherValues = [186.26, 229.79, 133.76, 215.2, 243.63, 228.33, 336.21, 423.08, 357.33, 383.68, 567.68, 746.06]
-
-# doge
-dogeValues = [0.002381, 0.002216, 0.001800, 0.002460, 0.002573, 0.002314, 0.003224, 0.003210, 0.002634, 0.002568,
-              0.003551, 0.004666]
-
-cryptos = ["Bitcoin", "Ethereum", "Doge"]
-crypto_values = [bitcoinValues, etherValues, dogeValues]
 
 colors = [
     "#F7464A", "#46BFBD", "#FDB45C", "#FEDCBA",
     "#ABCDEF", "#DDDDDD", "#ABCABC", "#4169E1",
     "#C71585", "#FF4500", "#FEDCBA", "#46BFBD"]
 
-
-def create_scatter_data(crypto_values):
-    scatter_data = []
-    for i in range(len(labels)):
-        temp = [labels[i], crypto_values[i]]
-        scatter_data.append(temp)
-    return scatter_data
 
 
 @app.route('/')
@@ -57,24 +45,16 @@ def about():
 @app.route('/results/')
 def results(crypto_one, crypto_two, program, startdate, enddate):
     title = crypto_one + "-" + crypto_two + " " + program + " Results"
-    c1, c2 = 0, 0
-    for i in range(len(cryptos)):
-        if crypto_one == cryptos[i]:
-            c1 = i
-        if crypto_two == cryptos[i]:
-            c2 = i
-    correlation = round(numpy.corrcoef(crypto_values[c1], crypto_values[c2])[1, 0], 3)
-
     dates = get_dates(startdate, enddate)
-    values1 = get_data(dates)
+    values1 = get_data(dates, crypto_one)
+    values2 = get_data(dates, crypto_two)
+    correlation = round(numpy.corrcoef(values1, values2)[1, 0], 3)
+
     # incorporate start and end date into get_dates and get_data DONE
     # incorporate get_data into values1 and 2 DONE
     return render_template('results.html', title=title, crypto_one=crypto_one, crypto_two=crypto_two, program=program,
-                           labels=get_dates_string_daily(dates), values1=values1, values2=crypto_values[c2], startdate=startdate, enddate=enddate,
-                           correlation=correlation, now='{d.year}-{d.month}-{d.day}'.format(d=datetime.datetime.now().date())
-)
-    #  scatter1=create_scatter_data(crypto_values[c1]),
-    #  scatter2=create_scatter_data(crypto_values[c2]),
+                           labels=get_dates_string_daily(dates), values1=values1, values2=values2, startdate=startdate, enddate=enddate,
+                           correlation=correlation, now='{d.year}-{d.month}-{d.day}'.format(d=datetime.datetime.now().date()))
 
 
 @app.route('/', methods=['POST'])

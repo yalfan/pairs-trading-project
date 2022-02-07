@@ -1,32 +1,70 @@
+import pandas
 import pandas as pd
+import numpy as np
 from pymongo import MongoClient
+import datetime
+from backtesting import Backtest, Strategy
+from backtesting.lib import crossover
 
-btc_sheet = pd.read_csv('data/gemini_BTCUSD_day.csv', skiprows=1)
-eth_sheet = pd.read_csv('data/gemini_ETHUSD_day.csv', skiprows=1)
-ltc_sheet = pd.read_csv('data/gemini_LTCUSD_day.csv', skiprows=1)
-bch_sheet = pd.read_csv('data/Bitstamp_BCHUSD_d.csv', skiprows=1)
-xrp_sheet = pd.read_csv('data/Bitstamp_XRPUSD_d.csv', skiprows=1)
+from backtesting.test import SMA, GOOG
 
-# bch, xrp, btc, eth, ltc
 
-client = MongoClient("mongodb+srv://yalfan22:yale2004@cluster0.qszrw.mongodb.net/test")
+from query_data import *
+
+client = MongoClient("mongodb+srv://yalfan22:yale2004@cluster0.qszrw.mongodb.net/test", connect=False)
 
 db = client.pairs_trading
 
+btc = db.btc
 eth = db.eth
+ltc = db.ltc
+bch = db.bch
+xrp = db.xrp
 
-sheet = eth_sheet
-rows = len(sheet.index)
-for i in range(rows):
-    date = sheet.at[i, 'Date'].replace(" 4:00", "").replace("/", " ").replace("-", " ").replace(" 00:00:00", "").replace(" 04:00:00", "")
-    high = sheet.at[i, 'High']
-    low = sheet.at[i, 'Low']
-    volume = sheet.at[i, 'Volume']
-    avg = (high + low)/2
+d1 = "2016-12-6"
+d2 = "2021-6-6"
 
-    data = {
-        "Date": date, "High": high, "Low": low, "Average": avg, "Volume": volume
-    }
+coin_string = "Bitcoin"
 
-    eth.insert_one(data)
-    print("inserted document: ", i)
+date1 = datetime.datetime.strptime(d1, "%Y-%m-%d")
+date2 = datetime.datetime.strptime(d2, "%Y-%m-%d")
+
+stuff = db.btc.find({'Date': {"$gte":  date1, "$lte":  date2}})
+
+
+df = get_data_dataframe(d1, d2, "Bitcoin")
+df.set_index('Date', inplace=True, drop=True)
+
+
+class SmaCross(Strategy):
+    # Define the two MA lags as *class variables*
+    # for later optimization
+    n1 = 10
+    n2 = 50
+
+    def init(self):
+        # Precompute the two moving averages
+        self.sma1 = self.I(SMA, self.data.Close, self.n1)
+        self.sma2 = self.I(SMA, self.data.Close, self.n2)
+
+    def next(self):
+        # If sma1 crosses above sma2, close any existing
+        # short trades, and buy the asset
+        if crossover(self.sma1, self.sma2):
+            self.position.close()
+            self.buy()
+
+        # Else, if sma1 crosses below sma2, close any existing
+        # long trades, and sell the asset
+        elif crossover(self.sma2, self.sma1):
+            self.position.close()
+            self.sell()
+
+
+bt = Backtest(df, SmaCross,
+              cash=100000,
+              exclusive_orders=True)
+
+output = bt.run()
+print(output)
+bt.plot()

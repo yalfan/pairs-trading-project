@@ -6,30 +6,13 @@ import json
 
 from query_data import *
 
-client = MongoClient("mongodb+srv://yalfan22:yale2004@cluster0.qszrw.mongodb.net/test")
-
-db = client.pairs_trading
-
-btc = db.btc
-eth = db.eth
-ltc = db.ltc
-bch = db.bch
-xrp = db.xrp
-
 app = Flask(__name__)
-
-labels = [
-    'JAN', 'FEB', 'MAR', 'APR',
-    'MAY', 'JUN', 'JUL', 'AUG',
-    'SEP', 'OCT', 'NOV', 'DEC'
-]
 
 
 colors = [
     "#F7464A", "#46BFBD", "#FDB45C", "#FEDCBA",
     "#ABCDEF", "#DDDDDD", "#ABCABC", "#4169E1",
     "#C71585", "#FF4500", "#FEDCBA", "#46BFBD"]
-
 
 
 @app.route('/')
@@ -45,9 +28,13 @@ def about():
 @app.route('/results/')
 def results(crypto_one, crypto_two, program, startdate, enddate):
     title = crypto_one + "-" + crypto_two + " " + program + " Results"
-    dates = get_dates(startdate, enddate)
-    values1 = get_data(dates, crypto_one)
-    values2 = get_data(dates, crypto_two)
+
+    dates = get_dates(startdate, enddate, crypto_one)
+    values1 = get_data(startdate, enddate, crypto_one)[0]
+    values2 = get_data(startdate, enddate, crypto_two)[0]
+    # avg1, open1, high1, low1, close1, volume1 = get_data(startdate, enddate, crypto_one)
+    # avg2, open2, high2, low2, close2, volume2 = get_data(startdate, enddate, crypto_two)
+
     correlation = round(numpy.corrcoef(values1, values2)[1, 0], 3)
 
     # incorporate start and end date into get_dates and get_data DONE

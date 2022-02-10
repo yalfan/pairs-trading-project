@@ -4,7 +4,9 @@ import datetime
 from pymongo import MongoClient
 import json
 
+from values import *
 from query_data import *
+from backtest import *
 
 app = Flask(__name__)
 
@@ -30,18 +32,26 @@ def results(crypto_one, crypto_two, program, startdate, enddate):
     title = crypto_one + "-" + crypto_two + " " + program + " Results"
 
     dates = get_dates(startdate, enddate, crypto_one)
-    values1 = get_data(startdate, enddate, crypto_one)[0]
-    values2 = get_data(startdate, enddate, crypto_two)[0]
+    avg1 = get_data(startdate, enddate, crypto_one)[0]
+    avg2 = get_data(startdate, enddate, crypto_two)[0]
     # avg1, open1, high1, low1, close1, volume1 = get_data(startdate, enddate, crypto_one)
     # avg2, open2, high2, low2, close2, volume2 = get_data(startdate, enddate, crypto_two)
 
-    correlation = round(numpy.corrcoef(values1, values2)[1, 0], 3)
+    # correlation = round(numpy.corrcoef(values1, values2)[1, 0], 3)
+    backtest_results1 = backtest(get_data_dataframe(startdate, enddate, crypto_one))
+    backtest_results2 = backtest(get_data_dataframe(startdate, enddate, crypto_two))
+
+    cagr1, roi1 = get_values(startdate, enddate, 100000, backtest_results1[4])
+    cagr2, roi2 = get_values(startdate, enddate, 100000, backtest_results2[4])
+
+    equity1 = backtest_results1[28]["Equity"].tolist()
+    equity2 = backtest_results2[28]["Equity"].tolist()
 
     # incorporate start and end date into get_dates and get_data DONE
     # incorporate get_data into values1 and 2 DONE
     return render_template('results.html', title=title, crypto_one=crypto_one, crypto_two=crypto_two, program=program,
-                           labels=get_dates_string_daily(dates), values1=values1, values2=values2, startdate=startdate, enddate=enddate,
-                           correlation=correlation, now='{d.year}-{d.month}-{d.day}'.format(d=datetime.datetime.now().date()))
+                           labels=get_dates_string_daily(dates), values1=avg1, values2=avg2, startdate=startdate,
+                           enddate=enddate, now='{d.year}-{d.month}-{d.day}'.format(d=datetime.datetime.now().date()),)
 
 
 @app.route('/', methods=['POST'])

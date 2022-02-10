@@ -36,7 +36,7 @@ def backtest(df):
                   exclusive_orders=True)
 
     output = bt.run()
-    # bt.plot()
+    bt.plot()
     return output
 
 
@@ -52,5 +52,3 @@ bt = Backtest(df, SmaCross,
 output = bt.run()
 print(output)
 # bt.plot()
-print(output[28]["Equity"].tolist())
-print(type(output[28]["Equity"].tolist()))

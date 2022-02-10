@@ -14,6 +14,8 @@ xrp = db.xrp
 
 # d1 = "2021-10-10"
 # d2 = "2021-12-6"
+
+
 def get_dates(date1, date2, coin_string):
     coin = string_to_coin(coin_string)
     d1 = datetime.datetime.strptime(date1, "%Y-%m-%d")
@@ -66,6 +68,7 @@ def get_data_dataframe(d1, d2, coin_string):
     arr = np.array([dates, open1, high1, low1, close1, volume1], dtype=object)
     arr = arr.T
     df = pd.DataFrame(arr,  columns=['Date', 'Open', 'High', 'Low', 'Close', 'Volume'])
+    df.set_index('Date', inplace=True, drop=True)
     return df
 
 

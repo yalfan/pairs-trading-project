@@ -32,10 +32,15 @@ def results(crypto_one, crypto_two, program, startdate, enddate):
     dates = get_dates(startdate, enddate, crypto_one)
     values1 = get_data(startdate, enddate, crypto_one)[0]
     values2 = get_data(startdate, enddate, crypto_two)[0]
+
+    
     # avg1, open1, high1, low1, close1, volume1 = get_data(startdate, enddate, crypto_one)
     # avg2, open2, high2, low2, close2, volume2 = get_data(startdate, enddate, crypto_two)
 
     correlation = round(numpy.corrcoef(values1, values2)[1, 0], 3)
+    #cagr1 = ((values1[0][1][0]/values1[4][0])**(1/values1[6])) - 1
+    #cagr2 = ((values2[1][0]/values2[4][0])**(1/values2[6])) - 1
+    #include in the below render_template: cagr1=cagr1, cagr2=cagr2
 
     # incorporate start and end date into get_dates and get_data DONE
     # incorporate get_data into values1 and 2 DONE

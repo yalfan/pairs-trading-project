@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+    {% if title %}
+    <title>{{ title }}</title>
+    {% else %}
+    <title>Results</title>
+    {% endif %}
+    <!--Chart.js JS CDN-->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    </head>
+
+    <body>
+    {% extends "layout.html" %}
+    {% block content %}
+
+    {% if title %}
+    <h1>{{ title }}</h1>
+    {% else %}
+    <h1>Results</h1>
+    {% endif %}
+
+    <div class="row">
+        <div class="longbox">
+        <h2>{{crypto_one}} and {{crypto_two}} Pairs Backtest</h2>
+        <p>Initial Capital: {{values['initial']}}</p>
+        <p>Total net P/L: {{values['total_pl']}}</p>
+        <p>CAGR: {{values['cagr']}}</p>
+        <p>Start Date: {{ start_date }}</p>
+        <p>End Date: {{ end_date }}</p>
+        <p>Total Transactions: {{values['trades']}}</p>
+        <p>Final Equity: {{values['final']}}</p>
+        <p>Total ROI: {{values['roi']}}</p>
+        </div>
+
+
+        <canvas id="myChart1" ></canvas>
+
+        <script>
+        var ctx = document.getElementById('myChart1').getContext('2d');
+        var myChart1 = new Chart(ctx, {
+            type: 'line',
+            data: {
+            labels: {{ labels|tojson }},
+            datasets: [
+                {
+                data: {{ equity|tojson }},
+                label: 'Equity',
+                borderColor: "#3e95cd",
+                fill: false,
+                }]
+            },
+            options: {
+                legend: { display: true },
+                title: {
+                display: true,
+                }}
+        });
+        </script>
+
+        {% for table in tables %}
+            {{titles[loop.index]}}
+            {{ table|safe }}
+        {% endfor %}
+
+    </div>
+
+    {% endblock %}
+
+    </body>
+</html>

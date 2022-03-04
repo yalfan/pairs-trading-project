@@ -37,12 +37,14 @@ def main():
         sheet = sheets[j]
         data = []
         for i in range(1, len(sheet[:, 1])):
+
             dates = sheet[:, 1]
             opens = sheet[:, 3]
             highs = sheet[:, 4]
             lows = sheet[:, 5]
             closes = sheet[:,6]
             volumes = sheet[:, 7]
+
             date = dates[i].replace(" 4:00", "").replace("/", " ").replace("-", " ") \
                 .replace(" 00:00:00", "").replace(" 04:00:00", "")
             if name == "btc":

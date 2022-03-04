@@ -57,14 +57,19 @@ def get_data(date1, date2, coin_string):
         lows.append(i['Low'])
         closes.append(i['Close'])
         volumes.append(i['Volume'])
+    average_prices.reverse()
+    opens.reverse()
+    highs.reverse()
+    lows.reverse()
+    closes.reverse()
+    volumes.reverse()
     return average_prices, opens, highs, lows, closes, volumes
 
 
 def get_data_dataframe(d1, d2, coin_string):
-    dates = get_dates(d1, d2, coin_string)
-
+    dates = np.array(get_dates(d1, d2, coin_string))
+    # dates = np.flip(dates)
     avg1, open1, high1, low1, close1, volume1 = np.array(get_data(d1, d2, coin_string))
-
     arr = np.array([dates, open1, high1, low1, close1, volume1], dtype=object)
     arr = arr.T
     df = pd.DataFrame(arr,  columns=['Date', 'Open', 'High', 'Low', 'Close', 'Volume'])

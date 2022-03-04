@@ -172,11 +172,15 @@ p {
   clear: both;
 }
 
-#startdate, #enddate {
-  width: 25%;
-  padding: 10px 15px;
-  font-size: 1em;
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-
+input[type="date"] {
+    appearance: none;
+    -webkit-appearance: none;
+    color: #95a5a6;
+    font-family: "Helvetica", arial, sans-serif;
+    font-size: 18px;
+    border:1px solid #ecf0f1;
+    background:#ecf0f1;
+    padding:5px;
+    display: inline-block !important;
+    visibility: visible !important;
 }
-

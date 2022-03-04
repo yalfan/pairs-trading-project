@@ -4,7 +4,6 @@
 <head>
     <title>Pairs Trading Program</title>
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
 </head>
 
 <body>
@@ -34,8 +33,8 @@
             <option value="XRP">XRP</option>
         </select>
 
-        <select id="program" name="program" required>
-            <option value="" disabled selected>Select a program</option>
+        <select id="function" name="function" required>
+            <option value="" disabled selected>Select a function</option>
             <option value="Backtest">Backtest</option>
             <option value="Analyze">Analyze</option>
             <option value="Graph">Graph</option>
@@ -43,49 +42,17 @@
 
         <h4></h4>
         <label>Start Period:</label>
-        <input type="date" id="startdate" name="startdate"
-           value="2021-12-06"
-           min="2016-01-01" max="<?= date('Y-m-d'); ?>">
-        <script>
-            var today = new Date();
-            var dd = today.getDate();
-            var mm = today.getMonth() + 1; //January is 0!
-            var yyyy = today.getFullYear();
+            <input type="date" id="startdate" name="startdate"
+               value="2016-01-01"
+               min="2016-01-01" max="{{now}}">
 
-            if (dd < 10) {
-               dd = '0' + dd;
-            }
-
-            if (mm < 10) {
-               mm = '0' + mm;
-            }
-
-            today = yyyy + '-' + mm + '-' + dd;
-            document.getElementById("startdate").setAttribute("max", today);
-        </script>
             <!-- change min and max to automatically update -->
 
-        <label>End Period</label>
-        <input type="date" id="enddate" name="enddate"
-           value="2021-12-06"
-           min="2016-01-01" max="<?= date('Y-m-d'); ?>">
-        <script>
-            var today = new Date();
-            var dd = today.getDate();
-            var mm = today.getMonth() + 1; //January is 0!
-            var yyyy = today.getFullYear();
+        <label>End Period:</label>
+            <input type="date" id="enddate" name="enddate"
+               value="{{now}}"
+               min="2016-01-01" max="{{now}}">
 
-            if (dd < 10) {
-               dd = '0' + dd;
-            }
-
-            if (mm < 10) {
-               mm = '0' + mm;
-            }
-
-            today = yyyy + '-' + mm + '-' + dd;
-            document.getElementById("enddate").setAttribute("max", today);
-        </script>
 
         <button>Submit</button>
 

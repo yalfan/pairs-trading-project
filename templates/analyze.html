@@ -20,107 +20,6 @@
     <h1>Results</h1>
     {% endif %}
 
-    {% if function == "Graph" %}
-    <canvas id="myChart2" ></canvas>
-
-    <script>
-    var ctx = document.getElementById('myChart2').getContext('2d');
-    var myChart2 = new Chart(document.getElementById("myChart2"), {
-        type: 'line',
-        data: {
-        labels: {{ labels|tojson }},
-        datasets: [
-            {
-            data: {{ values1|tojson }},
-            label: {{ crypto_one|tojson }},
-            borderColor: "#3e95cd",
-            fill: false,
-            }]
-        },
-        options: {
-            legend: { display: true },
-            title: {
-            display: true,
-            text: 'Price History of {{ crypto_one|tojson }}'
-            }}
-    });
-    </script>
-
-    <canvas id="myChart3" ></canvas>
-
-    <script>
-    var ctx = document.getElementById('myChart3').getContext('2d');
-    var myChart2 = new Chart(ctx, {
-        type: 'line',
-        data: {
-        labels: {{ labels|tojson }},
-        datasets: [
-            {
-            data: {{ values2|tojson }},
-            label: {{ crypto_two|tojson }},
-            borderColor: "#e8c3b9",
-            fill: false,
-            }]
-        },
-        options: {
-            legend: { display: true },
-            title: {
-            display: true,
-            text: 'Price History of {{ crypto_two|tojson }}'
-            }}
-    });
-    </script>
-
-    <canvas id="myChart" ></canvas>
-
-    <script>
-    var ctx = document.getElementById('myChart').getContext('2d');
-    new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: {{ labels|tojson }},
-            datasets: [{
-                data: {{ values1|tojson }},
-                label: {{ crypto_one|tojson }},
-                yAxisId: 'A',
-                borderColor: "#3e95cd",
-                fill: false,
-            }, {
-                label: {{ crypto_two|tojson }},
-                yAxisID: 'B',
-                data: {{ values2|tojson }},
-                borderColor: "#e8c3b9",
-                fill: false,
-            }]
-        },
-        options: {
-            legend: { display: true },
-            title: {
-            display: true,
-            text: 'Price History of {{ crypto_one|tojson }} and {{ crypto_two|tojson }}'
-            },
-            scales: {
-                A: {
-                    type: 'linear',
-                    position: 'left',
-                },
-                B: {
-                    type: 'linear',
-                    position: 'right',
-                    ticks: {
-                        max: 1,
-                        min: 0
-                    },
-                    grid: {
-                      drawOnChartArea: false, // only want the grid lines for one axis to show up
-                    }
-                }
-            }
-        }
-    });
-    </script>
-
-    {% elif function == "Analyze" %}
     <h2>Price Analysis</h2>
     <div class="row">
         <div class="box">
@@ -260,7 +159,7 @@
         <h3>Short Only</h3>
         <p>Correlation: {{ correlation }}</p>
         <p>CAGR: 3948%</p>
-        <!--<p>CAGR: {{ cagr2 }}</p>--> 
+        <!--<p>CAGR: {{ cagr2 }}</p>-->
         </div>
         <canvas id="scatterChart3"></canvas>
         <script>
@@ -321,63 +220,6 @@
         </script>
     </div>
 
-    {% elif function == "Backtest" %}
-    <div class="row">
-        <div class="longbox">
-        <p>Initial Capital:	10000.00</p>
-        <p>Total net P/L: -8817.60</p>
-        <p>CAGR: -30.32 %</p>
-        <p>Start Date: {{ start_date }}</p>
-        <p>End Date: {{ end_date }}</p>
-        <p>Total Transactions: 332</p>
-        <p>Final Equity: 1182.40</p>
-        <p>Total ROI: -88.18 %</p>
-        </div>
-        <div class="longbox">
-        <p>Initial Capital:	10000.00</p>
-        <p>Total net P/L: -8817.60</p>
-        <p>CAGR: -30.32 %</p>
-        <p>Start Date: {{ start_date }}</p>
-        <p>End Date: {{ end_date }}</p>
-        <p>Total Transactions: 332</p>
-        <p>Final Equity: 1182.40</p>
-        <p>Total ROI: -88.18 %</p>
-        </div>
-        <canvas id="equityGraph"></canvas>
-        <script>
-        var ctx = document.getElementById('equityGraph').getContext('2d');
-        var myChart = new Chart(document.getElementById("equityGraph"), {
-            type: 'line',
-            data: {
-            labels: {{ labels|tojson }},
-            datasets: [
-                {
-                data: {{ values1|tojson }},
-                label: {{ crypto_one|tojson }},
-                borderColor: "#3e95cd",
-                fill: false
-                },
-                {
-                data: {{ values2|tojson }},
-                label: {{ crypto_two|tojson }},
-                borderColor: "#e8c3b9",
-                fill: false
-                }]
-            },
-            options: {
-                legend: { display: true },
-                title: {
-                display: true,
-                text: 'Price History of {{ crypto_one|tojson }} and {{ crypto_two|tojson }}'
-                }}
-        });
-    </script>
-
-    </div>
-
-
-
-    {% endif %}
 
     {% endblock %}
 

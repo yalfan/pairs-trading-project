@@ -76,7 +76,7 @@ def backtest():
                            function="Backtest", labels=get_dates_string_daily(dates), equity1=equity1,
                            equity2=equity2, equity=equity, values=values,
                            start_date=start_date, end_date=end_date,
-                           tables=[final_df.to_html(classes='data')], titles=final_df.columns.values)
+                           tables=[final_df.to_html(classes='data', header="true")])
 
 
 @app.route('/analyze')

@@ -29,7 +29,7 @@ def get_values_pair(date1, date2, initial, df1, df2):
     initial = round(initial, 2)
     initial = "{:,}".format(initial)
 
-    final = round(final1, 2) + round(final2, 2)
+    final = round(final1 + final2, 2)
     final = "{:,}".format(final)
 
     return {"cagr": cagr, "roi": roi, "total_pl": total_pl, "initial": initial, "final": final, "trades": trades}

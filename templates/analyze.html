@@ -20,204 +20,63 @@
     <h1>Results</h1>
     {% endif %}
 
-    <h2>Price Analysis</h2>
     <div class="row">
         <div class="box">
-        <h3>Long {{ crypto_one|tojson }} / Short {{ crypto_two|tojson }}</h3>
+        <h2>Pair Analysis</h2>
         <p>Correlation: {{ correlation }}</p>
-        <p>CAGR: 3948%</p>
+        <p>Cointegration: {{ cointegration }}</p>
         <!--<p>Long CAGR: {{ cagr1 }}</p>
         <p>Short CAGR: {{ cagr2 }}</p>-->
         </div>
-        <canvas id="scatterChart1"></canvas>
+        <canvas id="myChart3" ></canvas>
+
         <script>
-            var ctx = document.getElementById("scatterChart1").getContext('2d');
-
-            // Define the data
-
-            var data = [{
-                x: 5,
-                y: 4
-            }, {
-                x: 2,
-                y: 14
-            },
-            {
-                x: 4,
-                y: 12
-            },
-            {
-                x: 2,
-                y: 10
-            },
-            {
-                x: 3,
-                y: 4
-            },
-            {
-                x: 3,
-                y: 5
-            },
-            {
-                x: 3,
-                y: 8
-            },
-            {
-                x: 6,
-                y: 12
-
-            }];// Add data values to array
-            // End Defining data
-            var options = {responsive: true, // Instruct chart js to respond nicely.
-                maintainAspectRatio: false, // Add to prevent default behaviour of full-width/height
-            };
-
-            // End Defining data
-            var myChart = new Chart(ctx, {
-            type: 'scatter',
+        var ctx = document.getElementById('myChart3').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
             data: {
+                labels: {{ labels|tojson }},
                 datasets: [{
-                        label: 'Profit Analysis (Long Only)', // Name the series
-                        data: data, // Specify the data values array
-                  borderColor: '#2196f3', // Add custom color border
-                  backgroundColor: '#2196f3', // Add custom color background (Points and Fill)
-                    }]
+                    data: {{ values1|tojson }},
+                    label: {{ crypto_one|tojson }},
+                    yAxisId: 'A',
+                    borderColor: "#3e95cd",
+                    fill: false,
+                }, {
+                    label: {{ crypto_two|tojson }},
+                    yAxisID: 'B',
+                    data: {{ values2|tojson }},
+                    borderColor: "#e8c3b9",
+                    fill: false,
+                }]
             },
-            options: options
-            });
+            options: {
+                legend: { display: true },
+                title: {
+                display: true,
+                text: 'Price History of {{ crypto_one|tojson }} and {{ crypto_two|tojson }}'
+                },
+                scales: {
+                    A: {
+                        type: 'linear',
+                        position: 'left',
+                    },
+                    B: {
+                        type: 'linear',
+                        position: 'right',
+                        ticks: {
+                            max: 1,
+                            min: 0
+                        },
+                        grid: {
+                          drawOnChartArea: false, // only want the grid lines for one axis to show up
+                        }
+                    }
+                }
+            }
+        });
         </script>
 
-    </div>
-    <div class="row">
-        <div class="box">
-        <h3>Long Only</h3>
-        <p>Correlation: {{ correlation }}</p>
-        <p>CAGR: 3948%</p>
-        <!--<p>CAGR: {{ cagr1 }}</p>-->
-        </div>
-        <canvas id="scatterChart2"></canvas>
-        <script>
-            var ctx = document.getElementById("scatterChart2").getContext('2d');
-
-            // Define the data
-
-            var data = [{
-                x: 5,
-                y: 4
-            }, {
-                x: 2,
-                y: 14
-            },
-            {
-                x: 4,
-                y: 12
-            },
-            {
-                x: 2,
-                y: 10
-            },
-            {
-                x: 3,
-                y: 4
-            },
-            {
-                x: 3,
-                y: 5
-            },
-            {
-                x: 3,
-                y: 8
-            },
-            {
-                x: 6,
-                y: 12
-
-            }];// Add data values to array
-            // End Defining data
-            var options = {responsive: true, // Instruct chart js to respond nicely.
-                maintainAspectRatio: false, // Add to prevent default behaviour of full-width/height
-            };
-
-            // End Defining data
-            var myChart = new Chart(ctx, {
-            type: 'scatter',
-            data: {
-                datasets: [{
-                        label: 'Profit Analysis (Long Only)', // Name the series
-                        data: data, // Specify the data values array
-                  borderColor: '#2196f3', // Add custom color border
-                  backgroundColor: '#2196f3', // Add custom color background (Points and Fill)
-                    }]
-            },
-            options: options
-            });
-        </script>
-
-    </div>
-    <div class="row">
-        <div class="box">
-        <h3>Short Only</h3>
-        <p>Correlation: {{ correlation }}</p>
-        <p>CAGR: 3948%</p>
-        <!--<p>CAGR: {{ cagr2 }}</p>-->
-        </div>
-        <canvas id="scatterChart3"></canvas>
-        <script>
-            var ctx = document.getElementById("scatterChart3").getContext('2d');
-
-            // Define the data
-
-            var data = [{
-                x: 5,
-                y: 4
-            }, {
-                x: 2,
-                y: 14
-            },
-            {
-                x: 4,
-                y: 12
-            },
-            {
-                x: 2,
-                y: 10
-            },
-            {
-                x: 3,
-                y: 4
-            },
-            {
-                x: 3,
-                y: 5
-            },
-            {
-                x: 3,
-                y: 8
-            },
-            {
-                x: 6,
-                y: 12
-
-            }];// Add data values to array
-            // End Defining data
-            var options = {responsive: true, // Instruct chart js to respond nicely.
-                maintainAspectRatio: false, // Add to prevent default behaviour of full-width/height
-            };
-
-            // End Defining data
-            var myChart = new Chart(ctx, {
-            type: 'scatter',
-            data: {
-                datasets: [{
-                        label: 'Profit Analysis (Short Only)', // Name the series
-                        data: data, // Specify the data values array
-                  borderColor: '#2196f3', // Add custom color border
-                  backgroundColor: '#2196f3', // Add custom color background (Points and Fill)
-                    }]
-            },
-            options: options
-            });
-        </script>
     </div>
 
 

@@ -1,8 +1,8 @@
-import pandas
 import pandas as pd
 import numpy as np
 from pymongo import MongoClient
 import datetime
+import statsmodels.tsa.stattools as ts
 
 
 def get_values_pair(date1, date2, initial, df1, df2):
@@ -15,22 +15,21 @@ def get_values_pair(date1, date2, initial, df1, df2):
     final1 = df1["Equity Final [$]"]
     final2 = df2["Equity Final [$]"]
 
-    trades = df1["# Trades"] + df2["# Trades"]
+    final_equity = round(final1 + final2, 2)
+    final = "{:,}".format(final_equity)
 
-    cagr_result = round((((final1 / initial) ** (1/years)) - 1) * 100, 2) + round((((final2 / initial) ** (1/years)) - 1) * 100, 2)
+    trades = df1["# Trades"] + df2["# Trades"]
+    cagr_result = round(((((final_equity / initial) ** (1/years)) - 1) * 100), 2)
     cagr = format_nums(cagr_result) + "%"
 
-    roi_result = round(((final1 - initial) / initial) * 100, 2) + round(((final2 - initial) / initial) * 100, 2)
+    roi_result = round((((final_equity - initial) / initial) * 100), 2)
     roi = format_nums(roi_result) + "%"
 
-    total_pl = round((final1 - initial) + (final2 - initial), 2)
+    total_pl = round((final1 + final2 - initial), 2)
     total_pl = format_nums(total_pl)
 
     initial = round(initial, 2)
     initial = "{:,}".format(initial)
-
-    final = round(final1 + final2, 2)
-    final = "{:,}".format(final)
 
     return {"cagr": cagr, "roi": roi, "total_pl": total_pl, "initial": initial, "final": final, "trades": trades}
 
@@ -40,6 +39,15 @@ def format_nums(num):
         return "+" + "{:,}".format(num)
     else:
         return "{:,}".format(num)
+
+
+def find_correlation(price1, price2):
+    return round(np.corrcoef(price1, price2)[1, 0], 5)
+
+
+def find_cointegration(price1, price2):
+    print(ts.coint(price1, price2))
+    return ts.coint(price1, price2)[1]
 
 
 # d1 = "2021-10-10"

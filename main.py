@@ -66,11 +66,11 @@ def backtest():
 
     final_df = combine_trades(get_trades(trades1), get_trades(trades2))
 
-    values = get_values_pair(start_date, end_date, 100000, backtest_results1, backtest_results2)
+    values = get_values_pair(start_date, end_date, 200000, backtest_results1, backtest_results2)
 
     equity1 = backtest_results1['_equity_curve']["Equity"].tolist()
     equity2 = backtest_results2['_equity_curve']["Equity"].tolist()
-    equity = equity1 + equity2
+    equity = [a + b for a, b in zip(equity1, equity2)]
 
     return render_template('backtest_pair.html', title=title, crypto_one=crypto_one, crypto_two=crypto_two,
                            function="Backtest", labels=get_dates_string_daily(dates), equity1=equity1,
@@ -88,16 +88,22 @@ def analyze():
 
     title = crypto_one + "-" + crypto_two + " Analyze Results"
 
-    # avg1, open1, high1, low1, close1, volume1 = get_data(start_date, end_date, crypto_one)
-    # avg2, open2, high2, low2, close2, volume2 = get_data(start_date, end_date, crypto_two)
+    avg1, open1, high1, low1, close1, volume1 = get_data(start_date, end_date, crypto_one)
+    avg2, open2, high2, low2, close2, volume2 = get_data(start_date, end_date, crypto_two)
 
-    # correlation = round(numpy.corrcoef(values1, values2)[1, 0], 3)
+    correlation = find_correlation(avg1, avg2)
+    # but there is a problem with correlation
+    # for example, if you had these two lines, you could argue that they are correlated as they are both are moving in a positive direction.
+    # but in pairs trading, a good pair will have the price of each currency move together, so when one does diverge, there is a high chance of them reconverging
+    # so, it's important to find the cointegration of both pairs. what cointegration expresses is the extent to which the distance between the two currencies will remain constant over time
+    cointegration = find_cointegration(avg1, avg2)
 
     dates = get_dates(start_date, end_date, crypto_one)
     avg1 = get_data(start_date, end_date, crypto_one)[0]
     avg2 = get_data(start_date, end_date, crypto_two)[0]
     return render_template('analyze.html', title=title, crypto_one=crypto_one, crypto_two=crypto_two, function="Analyze",
-                           labels=get_dates_string_daily(dates), values1=avg1, values2=avg2,)
+                           labels=get_dates_string_daily(dates), values1=avg1, values2=avg2,
+                           correlation=correlation, cointegration=cointegration)
 
 
 @app.route('/graph')
@@ -111,7 +117,9 @@ def graph():
 
     dates = get_dates(start_date, end_date, crypto_one)
     avg1 = get_data(start_date, end_date, crypto_one)[0]
+    print(avg1)
     avg2 = get_data(start_date, end_date, crypto_two)[0]
+    print(avg2)
     return render_template('graph.html', title=title, crypto_one=crypto_one, crypto_two=crypto_two, function="Graph",
                            labels=get_dates_string_daily(dates), values1=avg1, values2=avg2)
 

@@ -44,9 +44,9 @@ def main():
                 " 04:00:00", "")
 
             if name == "btc":
-                d1 = datetime.datetime.strptime(date, "%m %d %Y").date()
+                d1 = datetime.datetime.strptime(date, "%m %d %Y")
             else:
-                d1 = datetime.datetime.strptime(date, "%Y %m %d").date()
+                d1 = datetime.datetime.strptime(date, "%Y %m %d")
             # .replace(" 4:00", "").replace("/", " ").replace("-", " ").replace(" 00:00:00", "").replace(" 04:00:00", "")
             high = sheet.at[i, 'High']
             low = sheet.at[i, 'Low']

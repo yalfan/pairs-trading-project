@@ -96,6 +96,7 @@ def analyze():
     # for example, if you had these two lines, you could argue that they are correlated as they are both are moving in a positive direction.
     # but in pairs trading, a good pair will have the price of each currency move together, so when one does diverge, there is a high chance of them reconverging
     # so, it's important to find the cointegration of both pairs. what cointegration expresses is the extent to which the distance between the two currencies will remain constant over time
+    # cointegration or something
     cointegration = find_cointegration(avg1, avg2)
 
     dates = get_dates(start_date, end_date, crypto_one)

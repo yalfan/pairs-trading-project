@@ -7,8 +7,6 @@ from typing import Sequence, Optional, Union, Callable
 from numbers import Number
 from backtesting.test import SMA, GOOG
 
-from pandas_datareader import data as pdr
-
 
 class SmaCross(Strategy):
     # Define the two MA lags as *class variables*

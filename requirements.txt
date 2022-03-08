@@ -6,3 +6,4 @@ pandas
 statsmodels
 Backtesting
 gunicorn
+pymongo[srv]

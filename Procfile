@@ -1,1 +1,1 @@
-web: gunicorn pairs-trading-project.wsgi
+web: gunicorn app:app

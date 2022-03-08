@@ -1,4 +1,3 @@
-gunicorn
 numpy~=1.21.4
 Flask~=1.1.2
 pymongo~=4.0.1
@@ -6,3 +5,4 @@ Django~=3.2.12
 pandas~=1.1.5
 statsmodels~=0.13.1
 Backtesting~=0.3.3
+gunicorn~=20.1.0

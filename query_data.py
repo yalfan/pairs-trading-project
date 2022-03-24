@@ -39,7 +39,7 @@ def get_dates_string_daily(dates):
 
 def get_data(date1, date2, coin_string):
     coin = string_to_coin(coin_string)
-    average_prices, opens, highs, lows, closes, volumes = [], [], [], [], [], []
+    average_prices, opens, highs, lows, closes, volumes, open_interest = [], [], [], [], [], [], []
 
     # avg1, open1, high1, low1, close1, volume1
     # avg2, open2, high2, low2, close2, volume2
@@ -57,22 +57,30 @@ def get_data(date1, date2, coin_string):
         lows.append(i['Low'])
         closes.append(i['Close'])
         volumes.append(i['Volume'])
+        open_interest.append(0)
     average_prices.reverse()
     opens.reverse()
     highs.reverse()
     lows.reverse()
     closes.reverse()
     volumes.reverse()
-    return average_prices, opens, highs, lows, closes, volumes
+    return average_prices, opens, highs, lows, closes, volumes, open_interest
 
 
 def get_data_dataframe(d1, d2, coin_string):
+    # get dates
     dates = np.array(get_dates(d1, d2, coin_string))
     # dates = np.flip(dates)
-    avg1, open1, high1, low1, close1, volume1 = np.array(get_data(d1, d2, coin_string))
-    arr = np.array([dates, open1, high1, low1, close1, volume1], dtype=object)
+
+    # get values
+    avg1, open1, high1, low1, close1, volume1, open_interest = np.array(get_data(d1, d2, coin_string))
+
+    # make array
+    arr = np.array([dates, open1, high1, low1, close1, volume1, open_interest], dtype=object)
     arr = arr.T
-    df = pd.DataFrame(arr,  columns=['Date', 'Open', 'High', 'Low', 'Close', 'Volume'])
+
+    # make data frame
+    df = pd.DataFrame(arr,  columns=['Date', 'Open', 'High', 'Low', 'Close', 'Volume', 'Open Interest'])
     df.set_index('Date', inplace=True, drop=True)
     return df
 

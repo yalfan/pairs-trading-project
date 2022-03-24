@@ -102,6 +102,10 @@
                 A: {
                     type: 'linear',
                     position: 'left',
+                    title: {
+                        display: true,
+                        text: 'Price History of {{ crypto_one|tojson }} ($)'
+                    }
                 },
                 B: {
                     type: 'linear',
@@ -112,6 +116,10 @@
                     },
                     grid: {
                       drawOnChartArea: false, // only want the grid lines for one axis to show up
+                    },
+                    title: {
+                        display: true,
+                        text: 'Price History of {{ crypto_two|tojson }} ($)'
                     }
                 }
             }

@@ -184,3 +184,8 @@ input[type="date"] {
     display: inline-block !important;
     visibility: visible !important;
 }
+
+#backtestPriceHistoryChart {
+    width:900px !important;
+    height:450px !important;
+}

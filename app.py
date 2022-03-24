@@ -6,7 +6,7 @@ import json
 
 from values import *
 from query_data import *
-from backtest_data import *
+from custom_backtest import *
 
 app = Flask(__name__)
 
@@ -48,21 +48,22 @@ def backtest():
     start_date = request.args['start_date']
     end_date = request.args['end_date']
 
+    avg1 = get_data(start_date, end_date, crypto_one)[0]
+    avg2 = get_data(start_date, end_date, crypto_two)[0]
+
     title = crypto_one + "-" + crypto_two + " Backtest Results"
 
     dates = get_dates(start_date, end_date, crypto_one)
 
-    backtest_results1, backtest_results2 = backtest_data(get_data_dataframe(start_date, end_date, crypto_one),
+    """backtest_results1, backtest_results2 = backtest_data(get_data_dataframe(start_date, end_date, crypto_one),
                                                          get_data_dataframe(start_date, end_date, crypto_two))
     trades1 = backtest_results1["_trades"].drop(columns=['EntryBar', 'ExitBar', 'ReturnPct'])
     names1 = create_names(crypto_one, len(trades1.index))
-    trades1 = pd.concat([names1, trades1], axis=1)
-    trades1 = trades1.rename(columns={0: "Name"})
+    trades1 = (pd.concat([names1, trades1], axis=1)).rename(columns={0: "Name"})
 
     trades2 = backtest_results2["_trades"].drop(columns=['EntryBar', 'ExitBar', 'ReturnPct'])
     names2 = create_names(crypto_two, len(trades2.index))
-    trades2 = pd.concat([names2, trades2], axis=1)
-    trades2 = trades2.rename(columns={0: "Name"})
+    trades2 = (pd.concat([names2, trades2], axis=1)).rename(columns={0: "Name"})
 
     final_df = combine_trades(get_trades(trades1), get_trades(trades2))
 
@@ -70,12 +71,20 @@ def backtest():
 
     equity1 = backtest_results1['_equity_curve']["Equity"].tolist()
     equity2 = backtest_results2['_equity_curve']["Equity"].tolist()
-    equity = [a + b for a, b in zip(equity1, equity2)]
+    equity = [a + b for a, b in zip(equity1, equity2)]"""
+    df1, df2 = get_data_dataframe(start_date, end_date, crypto_one), \
+               get_data_dataframe(start_date, end_date, crypto_two)
+    df1.name = crypto_one
+    df2.name = crypto_two
+    bt = custom_backtest(df1, df2, 200000)
+    final_df = get_trades_df(bt)
+    equity = get_equity_curve(bt)
+    print(len(equity))
+    values = get_values(start_date, end_date, 200000, final_df, equity)
 
     return render_template('backtest_pair.html', title=title, crypto_one=crypto_one, crypto_two=crypto_two,
-                           function="Backtest", labels=get_dates_string_daily(dates), equity1=equity1,
-                           equity2=equity2, equity=equity, values=values,
-                           start_date=start_date, end_date=end_date,
+                           function="Backtest", labels=get_dates_string_daily(dates), equity=equity, values=values,
+                           start_date=start_date, end_date=end_date, values1=avg1, values2=avg2,
                            tables=[final_df.to_html(classes='data', header="true")])
 
 
@@ -97,7 +106,7 @@ def analyze():
     # but in pairs trading, a good pair will have the price of each currency move together, so when one does diverge, there is a high chance of them reconverging
     # so, it's important to find the cointegration of both pairs. what cointegration expresses is the extent to which the distance between the two currencies will remain constant over time
     # cointegration or something
-    cointegration = find_cointegration(avg1, avg2)
+    cointegration = find_cointegration(avg1, avg2)[1]
 
     dates = get_dates(start_date, end_date, crypto_one)
     avg1 = get_data(start_date, end_date, crypto_one)[0]
@@ -118,9 +127,7 @@ def graph():
 
     dates = get_dates(start_date, end_date, crypto_one)
     avg1 = get_data(start_date, end_date, crypto_one)[0]
-    print(avg1)
     avg2 = get_data(start_date, end_date, crypto_two)[0]
-    print(avg2)
     return render_template('graph.html', title=title, crypto_one=crypto_one, crypto_two=crypto_two, function="Graph",
                            labels=get_dates_string_daily(dates), values1=avg1, values2=avg2)
 
@@ -132,8 +139,13 @@ def my_form_post():
     function = request.form['function']
     start_date = request.form['startdate']
     end_date = request.form['enddate']
+
+    print(start_date)
+    print(end_date)
+
     return results(crypto_one, crypto_two, function, start_date, end_date)
 
 
 if __name__ == '__main__':
     app.run(debug=True)
+

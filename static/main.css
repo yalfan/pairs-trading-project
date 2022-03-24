@@ -185,7 +185,14 @@ input[type="date"] {
     visibility: visible !important;
 }
 
-#backtestPriceHistoryChart {
+.chart-container {
     width:900px !important;
     height:450px !important;
+}
+
+.grid {
+  display: grid;
+  gap: 1rem;
+  grid-auto-flow: column;
+  grid-template-columns: repeat(auto-fit, minmax(min-content, 1fr));
 }

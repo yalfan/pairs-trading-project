@@ -20,7 +20,7 @@
         <h1>Results</h1>
         {% endif %}
 
-        <div class="row">
+        <div class="grid">
             <div class="longbox">
             <h2>{{crypto_one}} and {{crypto_two}} Pairs Backtest</h2>
             <p>Initial Capital: {{values['initial']}}</p>
@@ -33,101 +33,127 @@
             <p>Total ROI: {{values['roi']}}</p>
             </div>
 
-            <canvas id="backtestPriceHistoryChart" ></canvas>
+            <div class="chart-container">
+                <canvas id="backtestPriceHistoryChart" ></canvas>
 
-            <script>
-            var ctx = document.getElementById('backtestPriceHistoryChart').getContext('2d');
-            new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: {{ labels|tojson }},
-                    datasets: [{
-                        data: {{ values1|tojson }},
-                        label: {{ crypto_one|tojson }},
-                        yAxisId: 'A',
-                        borderColor: "#3e95cd",
-                        fill: false,
-                    }, {
-                        label: {{ crypto_two|tojson }},
-                        yAxisID: 'B',
-                        data: {{ values2|tojson }},
-                        borderColor: "#e8c3b9",
-                        fill: false,
-                    }]
-                },
-                options: {
-                    legend: { display: true },
-                    title: {
-                        display: true,
-                        text: 'Price History of {{ crypto_one|tojson }} and {{ crypto_two|tojson }}'
+                <script>
+                var ctx = document.getElementById('backtestPriceHistoryChart').getContext('2d');
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: {{ labels|tojson }},
+                        datasets: [{
+                            data: {{ values1|tojson }},
+                            label: {{ crypto_one|tojson }},
+                            yAxisId: 'A',
+                            borderColor: "#3e95cd",
+                            fill: false,
+                        }, {
+                            label: {{ crypto_two|tojson }},
+                            yAxisID: 'B',
+                            data: {{ values2|tojson }},
+                            borderColor: "#e8c3b9",
+                            fill: false,
+                        }]
                     },
-                    scales: {
-                        A: {
-                            type: 'linear',
-                            position: 'left',
-                            title: {
-                                display: true,
-                                text: 'Price History of {{ crypto_one|tojson }} ($)'
-                            }
+                    options: {
+                        legend: { display: true },
+                        responsive:true,
+                        maintainAspectRatio: false,
+                        interaction: {
+                          mode: 'index',
+                          intersect: false
                         },
-                        B: {
-                            type: 'linear',
-                            position: 'right',
-                            ticks: {
-                                max: 1,
-                                min: 0
+                        plugins: {
+                          title: {
+                            display: true,
+                            text: 'Price History of {{ crypto_one|tojson }} and {{ crypto_two|tojson }}',
+                          }
+                        },
+                        scales: {
+                            A: {
+                                type: 'linear',
+                                position: 'left',
+                                title: {
+                                    display: true,
+                                    text: 'Price History of {{ crypto_one|tojson }} ($)'
+                                }
                             },
-                            grid: {
-                              drawOnChartArea: false, // only want the grid lines for one axis to show up
-                            },
-                            title: {
-                                display: true,
-                                text: 'Price History of {{ crypto_two|tojson }} ($)'
+                            B: {
+                                type: 'linear',
+                                position: 'right',
+                                ticks: {
+                                    max: 1,
+                                    min: 0
+                                },
+                                grid: {
+                                  drawOnChartArea: false, // only want the grid lines for one axis to show up
+                                },
+                                title: {
+                                    display: true,
+                                    text: 'Price History of {{ crypto_two|tojson }} ($)'
+                                }
                             }
                         }
                     }
-                }
-            });
-            </script>
-    </div>
+                });
+                </script>
+            </div>
 
-    <canvas id="myChart1" ></canvas>
+        </div>
 
-    <script>
-    var ctx = document.getElementById('myChart1').getContext('2d');
-    var myChart1 = new Chart(ctx, {
-        type: 'line',
-        data: {
-        labels: {{ labels|tojson }},
-        datasets: [
-            {
-            data: {{ equity|tojson }},
-            label: 'Equity',
-            borderColor: "#3e95cd",
-            fill: false,
-            }]
-        },
-        options: {
-            legend: { display: true },
-            title: {
-            display: true,
+        <br>
+
+        <canvas id="myChart1" ></canvas>
+
+        <script>
+        var ctx = document.getElementById('myChart1').getContext('2d');
+        var myChart1 = new Chart(ctx, {
+            type: 'line',
+            data: {
+            labels: {{ labels|tojson }},
+            datasets: [
+                {
+                data: {{ equity|tojson }},
+                label: 'Equity',
+                borderColor: "#3e95cd",
+                fill: false,
+                }]
             },
-            scales: {
-                y: {
-                    type: 'linear',
-                    grace: '20%'
+            options: {
+                legend: { display: true },
+                plugins: {
+                  title: {
+                    display: true,
+                    text: 'Equity Chart',
+                  }
+                },
+                interaction: {
+                  mode: 'index',
+                  intersect: false
+                },
+                title: {
+                display: true,
+                },
+                scales: {
+                    y: {
+                        type: 'linear',
+                        grace: '20%'
+                    }
                 }
-            }
-            }
-    });
-    </script>
+                }
+        });
+</script>
 
-    <div class="row">
-        <h2>Trade Log</h2>
-        {% for table in tables %}
-            {{ table|safe }}
-        {% endfor %}
-    </div>
+        <br>
+
+        <div class="row">
+
+            <h2>Trade Log</h2>
+            {% for table in tables %}
+                {{ table|safe }}
+            {% endfor %}
+        </div>
 
     {% endblock %}
 

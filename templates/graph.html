@@ -38,6 +38,10 @@
         },
         options: {
             legend: { display: true },
+            interaction: {
+              mode: 'index',
+              intersect: false
+            },
             title: {
             display: true,
             text: 'Price History of {{ crypto_one|tojson }}'
@@ -63,6 +67,10 @@
         },
         options: {
             legend: { display: true },
+            interaction: {
+              mode: 'index',
+              intersect: false
+            },
             title: {
             display: true,
             text: 'Price History of {{ crypto_two|tojson }}'
@@ -97,6 +105,10 @@
             title: {
             display: true,
             text: 'Price History of {{ crypto_one|tojson }} and {{ crypto_two|tojson }}'
+            },
+            interaction: {
+              mode: 'index',
+              intersect: false
             },
             scales: {
                 A: {

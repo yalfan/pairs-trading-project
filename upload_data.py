@@ -1,19 +1,62 @@
 import pandas as pd
 from pymongo import MongoClient
+import numpy as np
 import datetime
 import time
-start_time = time.time()
+import csv
+
+import requests
+import json
+
+import yfinance as yf
+from yahoofinancials import YahooFinancials
 
 
-def main():
-    btc_sheet = pd.read_csv('data/gemini_BTCUSD_day.csv', skiprows=1)
-    eth_sheet = pd.read_csv('data/gemini_ETHUSD_day.csv', skiprows=1)
-    ltc_sheet = pd.read_csv('data/gemini_LTCUSD_day.csv', skiprows=1)
-    bch_sheet = pd.read_csv('data/Bitstamp_BCHUSD_d.csv', skiprows=1)
-    xrp_sheet = pd.read_csv('data/Bitstamp_XRPUSD_d.csv', skiprows=1)
+def upload(sheet, coin):
+    data = []
+    rows = len(sheet.index)
+    for i in range(rows):
+        date = sheet.at[i, 'date']
 
-    # bch, xrp, btc, eth, ltc
+        d1 = datetime.datetime.strptime(date, "%Y-%m-%d")
 
+        high = sheet.at[i, 'high']
+        low = sheet.at[i, 'low']
+        open = sheet.at[i, 'open']
+        close = sheet.at[i, 'close']
+        volume = float(sheet.at[i, 'volume'])
+        avg = (high + low) / 2
+        element = {
+            "Date": d1, "Open": open, "High": high, "Low": low, "Close": close, "Average": avg, "Volume": volume
+        }
+        data.append(element)
+        print("inserted document")
+    coin.insert_many(data)
+
+
+def edit_csv(symbol):
+    file_name = 'data/new_%s_dailydata.csv' % symbol
+    df = pd.read_csv(file_name)
+    df['date'] = df['date'].apply(replace_hours)
+    # unix,low,high,open,close,volume,date,vol_fiat
+    df = df[['unix', 'low', 'high', 'open', 'close', 'volume', 'date', 'vol_fiat']]
+    columns = ['low', 'high', 'open', 'close', 'volume']
+    for i in columns:
+        df[i] = df[i].apply(round_numbers)
+    df.to_csv(fr'C:\Users\yboy2\PycharmProjects\pairs-trading-project\data\temp.csv', index=False)
+
+
+def replace_hours(x):
+    return x.replace(" 00:00:00", "")
+
+
+def round_numbers(x):
+    if x in ['low', 'high', 'open', 'close', 'volume']:
+        return x
+    return round(float(x), 5)
+
+
+if __name__ == "__main__":
     client = MongoClient("mongodb+srv://yalfan22:yale2004@cluster0.qszrw.mongodb.net/test", connect=False)
 
     db = client.pairs_trading
@@ -24,43 +67,17 @@ def main():
     bch = db.bch
     xrp = db.xrp
 
-    coins = [btc, eth, ltc, bch, xrp]
+    coins = {
+        "BTC-USD": btc,
+        "ETH-USD": eth,
+        "LTC-USD": ltc,
+        "XRP-USD": xrp,
+        "BCH-USD": bch
+    }
+    # we set which pair we want to retrieve data for
+    symbols = ["BTC-USD", "ETH-USD", "LTC-USD", "XRP-USD", "BCH-USD"]
+    for i in symbols:
+        file_name = 'data/%s_dailydata.csv' % i
+        sheet = pd.read_csv(file_name)
+        upload(sheet, coins[i])
 
-    # for debugging purposes
-    names = ["btc", "eth", "ltc", "bch", "xrp"]
-
-    sheets = [btc_sheet, eth_sheet, ltc_sheet, bch_sheet, xrp_sheet]
-    for i in range(len(coins)):
-
-        name = names[i]
-
-        coin = coins[i]
-        sheet = sheets[i]
-        rows = len(sheets[i].index)
-        data = []
-        for i in range(rows):
-            date = sheet.at[i, 'Date'].replace(" 4:00", "").replace("/", " ").replace("-", " ").replace(" 00:00:00",
-                                                                                                        "").replace(
-                " 04:00:00", "")
-
-            if name == "btc":
-                d1 = datetime.datetime.strptime(date, "%m %d %Y")
-            else:
-                d1 = datetime.datetime.strptime(date, "%Y %m %d")
-            # .replace(" 4:00", "").replace("/", " ").replace("-", " ").replace(" 00:00:00", "").replace(" 04:00:00", "")
-            high = sheet.at[i, 'High']
-            low = sheet.at[i, 'Low']
-            open = sheet.at[i, 'Open']
-            close = sheet.at[i, 'Close']
-            volume = sheet.at[i, 'Volume']
-            avg = (high + low) / 2
-
-            element = {
-                "Date": d1, "Open": open, "High": high, "Low": low, "Close": close, "Average": avg, "Volume": volume
-            }
-            data.append(element)
-            print(name, "inserted document: ", i)
-        coin.insert_many(data)
-
-main()
-print("--- %s seconds ---" % (time.time() - start_time))

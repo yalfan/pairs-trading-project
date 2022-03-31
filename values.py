@@ -3,6 +3,8 @@ import numpy as np
 from pymongo import MongoClient
 import datetime
 import statsmodels.tsa.stattools as ts
+from statsmodels.tsa.stattools import coint
+from query_data import *
 
 
 def get_values_pair(date1, date2, initial, df1, df2):
@@ -74,11 +76,19 @@ def find_correlation(price1, price2):
 
 
 def find_cointegration(price1, price2):
-    print(ts.coint(price1, price2))
     return ts.coint(price1, price2)
 
 
-# d1 = "2021-10-10"
-# d2 = "2021-12-6"
+"""start_date = "2021-6-6"
+end_date = "2021-12-6"
 # cagr, roi = get_values(d1, d2, 10000, 20000)
 
+avg1 = get_data(start_date, end_date, 'Bitcoin')[0]
+avg2 = get_data(start_date, end_date, 'BitCash')[0]
+
+x = np.array([1, 2, 3, 4, 5, 6])
+t1, t2, t3 = np.random.randn(3, 500)
+print(coint(avg1, avg2))
+# 9859002580259643
+# 9859002580259643
+"""

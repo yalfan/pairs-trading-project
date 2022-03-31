@@ -79,7 +79,6 @@ def backtest():
     bt = custom_backtest(df1, df2, 200000)
     final_df = get_trades_df(bt)
     equity = get_equity_curve(bt)
-    print(len(equity))
     values = get_values(start_date, end_date, 200000, final_df, equity)
 
     return render_template('backtest_pair.html', title=title, crypto_one=crypto_one, crypto_two=crypto_two,
@@ -139,9 +138,6 @@ def my_form_post():
     function = request.form['function']
     start_date = request.form['startdate']
     end_date = request.form['enddate']
-
-    print(start_date)
-    print(end_date)
 
     return results(crypto_one, crypto_two, function, start_date, end_date)
 

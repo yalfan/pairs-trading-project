@@ -3,17 +3,55 @@ from pymongo import MongoClient
 import numpy as np
 import datetime
 import time
-start_time = time.time()
+
+import requests
+import json
 
 
-def main():
-    btc_sheet = np.genfromtxt('data/gemini_BTCUSD_day.csv', skip_header=1, delimiter=',', dtype='str')
-    eth_sheet = np.genfromtxt('data/gemini_ETHUSD_day.csv', skip_header=1, delimiter=',', dtype='str')
-    ltc_sheet = np.genfromtxt('data/gemini_LTCUSD_day.csv', skip_header=1, delimiter=',', dtype='str')
-    bch_sheet = np.genfromtxt('data/Bitstamp_BCHUSD_d.csv', skip_header=1, delimiter=',', dtype='str')
-    xrp_sheet = np.genfromtxt('data/Bitstamp_XRPUSD_d.csv', skip_header=1, delimiter=',', dtype='str')
+def fetch_daily_data(symbol):
+    pair_split = symbol.split('/')  # symbol must be in format XXX/XXX ie. BTC/EUR
+    symbol = pair_split[0] + '-' + pair_split[1]
+    symbol_no_dash = pair_split[0] + pair_split[1]
+    url = f'https://api.pro.coinbase.com/products/{symbol}/candles?granularity=86400'
+    response = requests.get(url)
+    if response.status_code == 200:  # check to make sure the response from server is good
+        data = pd.DataFrame(json.loads(response.text), columns=['unix', 'low', 'high', 'open', 'close', 'volume'])
+        data['date'] = pd.to_datetime(data['unix'], unit='s')  # convert to a readable date
+        data['vol_fiat'] = data['volume'] * data['close']      # multiply the BTC volume by closing price to approximate fiat volume
 
-    # bch, xrp, btc, eth, ltc
+        # if we failed to get any data, print an error...otherwise write the file
+        if data is None:
+            print("Did not return any data from Coinbase for this symbol")
+        else:
+            data.to_csv(fr'C:\Users\yboy2\PycharmProjects\pairs-trading-project\data\{symbol_no_dash}_dailydata.csv', index=False)
+    else:
+        print("Did not receieve OK response from Coinbase API")
+
+
+def upload(sheet, name, coin):
+    data = []
+    rows = len(sheet.index)
+    for i in range(rows):
+        date = sheet.at[i, 'date']
+
+        d1 = datetime.datetime.strptime(date, "%Y-%m-%d")
+
+        high = sheet.at[i, 'high']
+        low = sheet.at[i, 'low']
+        open = sheet.at[i, 'open']
+        close = sheet.at[i, 'close']
+        volume = sheet.at[i, 'volume']
+        avg = (high + low) / 2
+        print(type(high), type(low), type(open), type(close), type(volume), type(avg))
+        element = {
+            "Date": d1, "Open": open, "High": high, "Low": low, "Close": close, "Average": avg, "Volume": volume
+        }
+        data.append(element)
+        print(name, "inserted document: ", i)
+    coin.insert_many(data)
+
+
+if __name__ == "__main__":
 
     client = MongoClient("mongodb+srv://yalfan22:yale2004@cluster0.qszrw.mongodb.net/test", connect=False)
 
@@ -25,48 +63,21 @@ def main():
     bch = db.bch
     xrp = db.xrp
 
-    coins = [btc, eth, ltc, bch, xrp]
+    coins = {
+        "BTCUSD": btc,
+        "ETHUSD": eth,
+        "LTCUSD": ltc,
+        "XRPUSD": xrp,
+        "BCHUSD": bch
+    }
 
-    names = ["btc", "eth", "ltc", "bch", "xrp"]
-
-    sheets = [btc_sheet, eth_sheet, ltc_sheet, bch_sheet, xrp_sheet]
-
-    for j in range(len(sheets)):
-        name = names[j]
-        coin = coins[j]
-        sheet = sheets[j]
-        data = []
-        for i in range(1, len(sheet[:, 1])):
-
-            dates = sheet[:, 1]
-            opens = sheet[:, 3]
-            highs = sheet[:, 4]
-            lows = sheet[:, 5]
-            closes = sheet[:,6]
-            volumes = sheet[:, 7]
-
-            date = dates[i].replace(" 4:00", "").replace("/", " ").replace("-", " ") \
-                .replace(" 00:00:00", "").replace(" 04:00:00", "")
-            if name == "btc":
-                date = datetime.datetime.strptime(date, "%m %d %Y")
-            else:
-                date = datetime.datetime.strptime(date, "%Y %m %d")
-
-            high = float(highs[i])
-            low = float(lows[i])
-            volume = float(volumes[i])
-            open = float(opens[i])
-            close = float(closes[i])
-            avg = (high + low) / 2
-
-            element = {
-                "Date": date, "Open": open, "High": high, "Low": low, "Close": close, "Average": avg, "Volume": volume
-            }
-            data.append(element)
-            # print(name, "inserted document: ", i)
-            # print("Date", date, "High", high, "Low", low, "Average", avg, "Volume", volume)
-        coin.insert_many(data)
+    # we set which pair we want to retrieve data for
+    data = ["BTC/USD", "ETH/USD", "LTC/USD", "XRP/USD", "BCH/USD"]
+    for i in data:
+        fetch_daily_data(symbol=i)
+        coin_symbol = i.replace('/', '')
+        file_name = 'data/%s_dailydata.csv' % coin_symbol
+        sheet = pd.read_csv(file_name)
+        upload(sheet, coin_symbol, coins[coin_symbol])
 
 
-main()
-print("--- %s seconds ---" % (time.time() - start_time))

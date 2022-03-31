@@ -2,6 +2,8 @@ import pandas as pd
 from pymongo import MongoClient
 import numpy as np
 import datetime
+from update_data import *
+from upload_data import *
 
 client = MongoClient("mongodb+srv://yalfan22:yale2004@cluster0.qszrw.mongodb.net/test", connect=False)
 db = client.pairs_trading
@@ -16,6 +18,7 @@ xrp = db.xrp
 # d2 = "2021-12-6"
 
 
+
 def get_dates(date1, date2, coin_string):
     coin = string_to_coin(coin_string)
     d1 = datetime.datetime.strptime(date1, "%Y-%m-%d")
@@ -26,7 +29,6 @@ def get_dates(date1, date2, coin_string):
     dates_array = []
     for i in dates:
         dates_array.append(i['Date'])
-    dates_array.reverse()
     return dates_array
 
 
@@ -38,7 +40,15 @@ def get_dates_string_daily(dates):
 
 
 def get_data(date1, date2, coin_string):
+    coin_symbols = {
+        "Bitcoin": "BTC-USD",
+        "Ethereum": "ETH-USD",
+        "Litecoin": "LTC-USD",
+        "XRP": "XRP-USD",
+        "BitCash": "BCH-USD"
+    }
     coin = string_to_coin(coin_string)
+    check_dates(coin_symbols[coin_string])
     average_prices, opens, highs, lows, closes, volumes, open_interest = [], [], [], [], [], [], []
 
     # avg1, open1, high1, low1, close1, volume1
@@ -58,12 +68,12 @@ def get_data(date1, date2, coin_string):
         closes.append(i['Close'])
         volumes.append(i['Volume'])
         open_interest.append(0)
-    average_prices.reverse()
+    """average_prices.reverse()
     opens.reverse()
     highs.reverse()
     lows.reverse()
     closes.reverse()
-    volumes.reverse()
+    volumes.reverse()"""
     return average_prices, opens, highs, lows, closes, volumes, open_interest
 
 
@@ -94,3 +104,20 @@ def string_to_coin(coin_string):
         "XRP": xrp
     }[coin_string]
     return coin
+
+
+def check_dates(coin_string):
+    coins = {
+        "BTC-USD": btc,
+        "ETH-USD": eth,
+        "LTC-USD": ltc,
+        "XRP-USD": xrp,
+        "BCH-USD": bch
+    }
+    today = datetime.datetime.today().strftime('%Y-%m-%d')
+    coin = coins[coin_string]
+    last_date = coin.find().limit(1).sort([('$natural',-1)])[0]['Date'].date()
+    if last_date.strftime('%Y-%m-%d') != today:
+        update_csv_db(coin_string, last_date, coin)
+
+

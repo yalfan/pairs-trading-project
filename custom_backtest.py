@@ -1,7 +1,10 @@
 import pandas as pd
 
 from query_data import *
-from backtesting.test import SMA
+
+
+def SMA(arr: pd.Series, n: int):
+    return pd.Series(arr).rolling(n).mean()
 
 
 def STD_DEV(arr: pd.Series, n: int):
@@ -14,6 +17,7 @@ def RATIO(arr: pd.Series):
 
 def Z_SCORE(arr: pd.Series):
     return pd.Series(arr)
+
 
 class PairRatio():
     def __init__(self, ratio, sma, std_dev, z_score, df1, df2, equity):

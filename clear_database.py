@@ -1,5 +1,4 @@
 from pymongo import MongoClient
-import datetime
 
 client = MongoClient("mongodb+srv://yalfan22:yale2004@cluster0.qszrw.mongodb.net/test")
 

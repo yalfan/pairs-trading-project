@@ -1,10 +1,6 @@
 import pandas as pd
 
 from query_data import *
-from backtesting import Backtest, Strategy
-from backtesting.lib import crossover
-from typing import Sequence, Optional, Union, Callable
-from numbers import Number
 from backtesting.test import SMA
 
 

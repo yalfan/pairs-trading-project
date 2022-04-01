@@ -1,14 +1,6 @@
 import pandas as pd
-from pymongo import MongoClient
-import numpy as np
 import datetime
-import time
-import csv
 
-import requests
-import json
-
-import yfinance as yf
 from yahoofinancials import YahooFinancials
 
 

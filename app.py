@@ -1,8 +1,4 @@
 from flask import Flask, render_template, request, redirect, url_for
-import numpy
-import datetime
-from pymongo import MongoClient
-import json
 
 from values import *
 from query_data import *

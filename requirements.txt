@@ -4,6 +4,6 @@ pymongo
 Django
 pandas
 statsmodels
-Backtesting
 gunicorn
 pymongo[srv]
+yahoofinancials

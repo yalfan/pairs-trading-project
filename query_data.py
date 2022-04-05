@@ -2,7 +2,6 @@ import pandas as pd
 from pymongo import MongoClient
 import numpy as np
 import datetime
-from update_data import *
 from upload_data import *
 
 client = MongoClient("mongodb+srv://yalfan22:yale2004@cluster0.qszrw.mongodb.net/test", connect=False)
@@ -117,7 +116,11 @@ def check_dates(coin_string):
     today = datetime.datetime.today().strftime('%Y-%m-%d')
     coin = coins[coin_string]
     last_date = coin.find().limit(1).sort([('$natural',-1)])[0]['Date'].date()
+    # print(last_date)
     if last_date.strftime('%Y-%m-%d') != today:
+        # print("updated date!")
         update_csv_db(coin_string, last_date, coin)
+
+
 
 

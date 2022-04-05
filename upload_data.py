@@ -2,9 +2,40 @@ import pandas as pd
 from pymongo import MongoClient
 import numpy as np
 import datetime
+from yahoofinancials import YahooFinancials
 
 
-def upload(sheet, coin):
+def update_csv_db(symbol, lastdate, coin):
+    yahoo_financials = YahooFinancials(symbol)
+    today = datetime.datetime.today().strftime('%Y-%m-%d')
+    lastdate = (lastdate + datetime.timedelta(days=1)).strftime('%Y-%m-%d')
+    data = yahoo_financials.get_historical_price_data(lastdate, today, "daily")
+    df = pd.DataFrame(data[symbol]['prices'])
+    # df = df.drop('date', axis=1).set_index('formatted_date')
+    # df.index.names = ['date']
+    df.rename(columns={"date": "unix", "formatted_date": "date"}, inplace=True)
+    data_to_upload = []
+    for index, row in df.iterrows():
+        date = row['date']
+
+        d1 = datetime.datetime.strptime(date, "%Y-%m-%d")
+        # print(d1)
+
+        high = row['high']
+        low = row['low']
+        open = row['open']
+        close = row['close']
+        volume = float(row['volume'])
+        avg = (high + low) / 2
+        element = {
+            "Date": d1, "Open": open, "High": high, "Low": low, "Close": close, "Average": avg, "Volume": volume
+        }
+        data_to_upload.append(element)
+    coin.insert_many(data_to_upload)
+    df.to_csv(fr'\data\{symbol}_dailydata.csv',mode='a', index=False, header=False)
+
+
+def upload_csvs(sheet, coin):
     data = []
     rows = len(sheet.index)
     for i in range(rows):
@@ -22,30 +53,7 @@ def upload(sheet, coin):
             "Date": d1, "Open": open, "High": high, "Low": low, "Close": close, "Average": avg, "Volume": volume
         }
         data.append(element)
-        print("inserted document")
     coin.insert_many(data)
-
-
-def edit_csv(symbol):
-    file_name = 'data/new_%s_dailydata.csv' % symbol
-    df = pd.read_csv(file_name)
-    df['date'] = df['date'].apply(replace_hours)
-    # unix,low,high,open,close,volume,date,vol_fiat
-    df = df[['unix', 'low', 'high', 'open', 'close', 'volume', 'date', 'vol_fiat']]
-    columns = ['low', 'high', 'open', 'close', 'volume']
-    for i in columns:
-        df[i] = df[i].apply(round_numbers)
-    df.to_csv(fr'C:\Users\yboy2\PycharmProjects\pairs-trading-project\data\temp.csv', index=False)
-
-
-def replace_hours(x):
-    return x.replace(" 00:00:00", "")
-
-
-def round_numbers(x):
-    if x in ['low', 'high', 'open', 'close', 'volume']:
-        return x
-    return round(float(x), 5)
 
 
 if __name__ == "__main__":
@@ -68,8 +76,20 @@ if __name__ == "__main__":
     }
     # we set which pair we want to retrieve data for
     symbols = ["BTC-USD", "ETH-USD", "LTC-USD", "XRP-USD", "BCH-USD"]
-    for i in symbols:
-        file_name = 'data/%s_dailydata.csv' % i
+    today = datetime.datetime.today().strftime('%Y-%m-%d')
+    for symbol in symbols:
+        file_name = 'data/%s_dailydata.csv' % symbol
         sheet = pd.read_csv(file_name)
-        upload(sheet, coins[i])
+        with open(file_name, "r") as f1:
+            last_date = ""
+            last_line = f1.readlines()[-1]
+            for i in range(-11, -1, 1):
+                last_date += last_line[i]
+        if last_date != today:
+            last_date = datetime.datetime.strptime(last_date, "%Y-%m-%d")
+            print("updated %s" % file_name)
+            update_csv_db(symbol, last_date, coins[symbol])
+
+        # upload_csvs(sheet, coins[symbol])
+
 

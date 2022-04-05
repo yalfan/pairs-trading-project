@@ -92,8 +92,8 @@ def analyze():
 
     title = crypto_one + "-" + crypto_two + " Analyze Results"
 
-    avg1, open1, high1, low1, close1, volume1 = get_data(start_date, end_date, crypto_one)
-    avg2, open2, high2, low2, close2, volume2 = get_data(start_date, end_date, crypto_two)
+    avg1 = get_data(start_date, end_date, crypto_one)[0]
+    avg2 = get_data(start_date, end_date, crypto_two)[0]
 
     correlation = find_correlation(avg1, avg2)
     # but there is a problem with correlation
@@ -104,8 +104,6 @@ def analyze():
     cointegration = find_cointegration(avg1, avg2)[1]
 
     dates = get_dates(start_date, end_date, crypto_one)
-    avg1 = get_data(start_date, end_date, crypto_one)[0]
-    avg2 = get_data(start_date, end_date, crypto_two)[0]
     return render_template('analyze.html', title=title, crypto_one=crypto_one, crypto_two=crypto_two, function="Analyze",
                            labels=get_dates_string_daily(dates), values1=avg1, values2=avg2,
                            correlation=correlation, cointegration=cointegration)

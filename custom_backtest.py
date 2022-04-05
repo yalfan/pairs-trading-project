@@ -49,6 +49,7 @@ class PairRatio():
         self.equity = equity
         self.portfolio = 0
         self.portfolio_values = []
+        self.today = datetime.datetime.today().date()
         self.lom = {
             self.coin1: "Less" if self.prices1[0] < self.prices2[0] else "More",
             self.coin2: "Less" if self.prices2[0] < self.prices1[0] else "More"
@@ -72,6 +73,8 @@ class PairRatio():
                 action = self.get_action(self.coin1)
                 if action == "Close":
                     self.close()
+            if self.dates[i].date() == self.today:
+                self.close()
             self.update_portfolio()
 
     def short_long(self, coin1, coin2):

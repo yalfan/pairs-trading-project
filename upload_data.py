@@ -32,7 +32,7 @@ def update_csv_db(symbol, lastdate, coin):
         }
         data_to_upload.append(element)
     coin.insert_many(data_to_upload)
-    df.to_csv('/data/%s_dailydata.csv' % symbol,mode='a', index=False, header=False)
+    df.to_csv('data/%s_dailydata.csv' % symbol,mode='a', index=False, header=False)
 
 
 def upload_csvs(sheet, coin):

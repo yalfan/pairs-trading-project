@@ -102,11 +102,13 @@ def analyze():
     # so, it's important to find the cointegration of both pairs. what cointegration expresses is the extent to which the distance between the two currencies will remain constant over time
     # cointegration or something
     cointegration = find_cointegration(avg1, avg2)[1]
+    final_df = find_best_pairs(start_date, end_date)
 
     dates = get_dates(start_date, end_date, crypto_one)
     return render_template('analyze.html', title=title, crypto_one=crypto_one, crypto_two=crypto_two, function="Analyze",
                            labels=get_dates_string_daily(dates), values1=avg1, values2=avg2,
-                           correlation=correlation, cointegration=cointegration)
+                           correlation=correlation, cointegration=cointegration,
+                           tables=[final_df.to_html(classes='data', header="true")])
 
 
 @app.route('/graph')

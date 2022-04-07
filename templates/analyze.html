@@ -91,6 +91,14 @@
 
     </div>
 
+    <div class="row">
+
+        <h2>All Pairs</h2>
+        {% for table in tables %}
+            {{ table|safe }}
+        {% endfor %}
+    </div>
+
 
     {% endblock %}
 

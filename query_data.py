@@ -4,6 +4,8 @@ import numpy as np
 import datetime
 from upload_data import *
 
+# d1 = "2021-10-10"
+# d2 = "2021-12-6"
 client = MongoClient("mongodb+srv://yalfan22:yale2004@cluster0.qszrw.mongodb.net/test", connect=False)
 db = client.pairs_trading
 
@@ -13,9 +15,20 @@ ltc = db.ltc
 bch = db.bch
 xrp = db.xrp
 
-# d1 = "2021-10-10"
-# d2 = "2021-12-6"
 
+def find_best_pairs(date1, date2):
+    from values import find_correlation, find_cointegration
+    coin_symbols = ["Bitcoin", "Ethereum", "Litecoin", "Ripple", "Bitcoin Cash"]
+    values_to_return = []
+    for i in range(len(coin_symbols)-1):
+        for j in range(i+1, len(coin_symbols)):
+            prices1 = np.array(get_data(date1, date2, coin_symbols[i])[0])
+            prices2 = np.array(get_data(date1, date2, coin_symbols[j])[0])
+            values_to_return.append([coin_symbols[i], coin_symbols[j],
+                                     find_correlation(prices1, prices2), find_cointegration(prices1, prices2)[1]])
+    df = pd.DataFrame(values_to_return, columns=['Coin1', 'Coin2', 'Correlation', 'Cointegration P-Value'])
+
+    return df
 
 
 def get_dates(date1, date2, coin_string):
@@ -120,7 +133,4 @@ def check_dates(coin_string):
     if last_date.strftime('%Y-%m-%d') != today:
         # print("updated date!")
         update_csv_db(coin_string, last_date, coin)
-
-
-
 

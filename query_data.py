@@ -43,8 +43,8 @@ def get_data(date1, date2, coin_string):
         "Bitcoin": "BTC-USD",
         "Ethereum": "ETH-USD",
         "Litecoin": "LTC-USD",
-        "Ripple": "XRP-USD",
-        "Bitcoin Cash": "BCH-USD"
+        "XRP": "XRP-USD",
+        "BitCash": "BCH-USD"
     }
     coin = string_to_coin(coin_string)
     check_dates(coin_symbols[coin_string])
@@ -99,8 +99,8 @@ def string_to_coin(coin_string):
         "Bitcoin": btc,
         "Ethereum": eth,
         "Litecoin": ltc,
-        "Bitcoin Cash": bch,
-        "Ripple": xrp
+        "BitCash": bch,
+        "XRP": xrp
     }[coin_string]
     return coin
 

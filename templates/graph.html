@@ -20,6 +20,48 @@
     <h1>Results</h1>
     {% endif %}
 
+    <form method="POST">
+        <select id="crypto_name" name="crypto_name" required>
+            <option value="" disabled selected>Select currency 1</option>
+            <option value="Bitcoin">Bitcoin</option>
+            <option value="Ethereum">Ethereum</option>
+            <option value="Litecoin">Litecoin</option>
+            <option value="Bitcoin Cash">Bitcoin Cash</option>
+            <option value="Ripple">Ripple</option>
+        </select>
+
+        <select id="crypto_name_2" name="crypto_name_2" required>
+            <option value="" disabled selected>Select currency 2</option>
+            <option value="Bitcoin">Bitcoin</option>
+            <option value="Ethereum">Ethereum</option>
+            <option value="Litecoin">Litecoin</option>
+            <option value="Bitcoin Cash">Bitcoin Cash</option>
+            <option value="Ripple">Ripple</option>
+        </select>
+    </form>
+    <form>
+        <label>Start Period:</label>
+            <input type="date" id="startdate" name="startdate"
+               value="2020-06-06"
+               min="2018-01-01" max="{{now}}">
+
+        <label>End Period:</label>
+            <input type="date" id="enddate" name="enddate"
+               value="2022-04-07"
+               min="2018-01-02" max="{{now}}">
+    </form>
+    <button onclick="visitPage();">Submit</button>
+    <script>
+    function visitPage(){
+        let sdate = startdate;
+        let edate = enddate;
+        let crypto1 = crypto_name;
+        let crypto2 = crypto_name_2;
+        window.location='http://127.0.0.1:5000/graph?crypto_one=' + crypto1.value +'&crypto_two=' + crypto2.value + '&start_date=' + sdate.value + '&end_date=' + edate.value;
+
+    }
+    </script>
+
     <canvas id="myChart1" ></canvas>
 
     <script>

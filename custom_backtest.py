@@ -73,7 +73,7 @@ class PairRatio():
                 action = self.get_action(self.coin1)
                 if action == "Close":
                     self.close()
-            if self.dates[i].date() == self.today:
+            if self.dates[i].date() == self.today and self.open_position:
                 self.close()
             self.update_portfolio()
 

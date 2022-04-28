@@ -90,6 +90,7 @@ if __name__ == "__main__":
             print("updated %s" % file_name)
             update_csv_db(symbol, last_date, coins[symbol])
 
-        # upload_csvs(sheet, coins[symbol])
+        upload_csvs(sheet, coins[symbol])
+        print("uploaded %s" % symbol)
 
 

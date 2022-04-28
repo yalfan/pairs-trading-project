@@ -12,10 +12,10 @@ colors = [
     "#ABCDEF", "#DDDDDD", "#ABCABC", "#4169E1",
     "#C71585", "#FF4500", "#FEDCBA", "#46BFBD"]
 
+now = datetime.datetime.now().date()
 
 @app.route('/')
 def home():
-    now = datetime.datetime.now().date()
     return render_template('home.html', now=now)
 
 
@@ -33,57 +33,52 @@ def results(crypto_one, crypto_two, function, start_date, end_date):
     elif function == "Graph":
         return redirect(url_for('graph', crypto_one=crypto_one, crypto_two=crypto_two, start_date=start_date, end_date=end_date))
 
-    # incorporate start and end date into get_dates and get_data DONE
-    # incorporate get_data into values1 and 2 DONE
 
-
-@app.route('/backtest')
+@app.route('/backtest', methods=['GET', 'POST'])
 def backtest():
     crypto_one = request.args['crypto_one']
     crypto_two = request.args['crypto_two']
     start_date = request.args['start_date']
     end_date = request.args['end_date']
+    bt_params = 15, 15, 0, 2, 1, 0
+    try:
+        ma_period = int(request.args['ma_period'])
+        std_period = int(request.args['std_period'])
+        max_dur = int(request.args['max_dur'])
+        entry_threshold = float(request.args['entry_threshold'])
+        exit_threshold = float(request.args['exit_threshold'])
+        sl_threshold = float(request.args['sl_threshold'])
+        bt_params = ma_period, std_period, max_dur, entry_threshold, exit_threshold, sl_threshold
+    except KeyError:
+        pass
+    else:
+        bt_params = ma_period, std_period, max_dur, entry_threshold, exit_threshold, sl_threshold
 
     avg1 = get_data(start_date, end_date, crypto_one)[0]
     avg2 = get_data(start_date, end_date, crypto_two)[0]
 
     title = crypto_one + "-" + crypto_two + " Backtest Results"
 
-    dates = get_dates(start_date, end_date, crypto_one)
+    dates = get_dates(start_date, end_date)
 
-    """backtest_results1, backtest_results2 = backtest_data(get_data_dataframe(start_date, end_date, crypto_one),
-                                                         get_data_dataframe(start_date, end_date, crypto_two))
-    trades1 = backtest_results1["_trades"].drop(columns=['EntryBar', 'ExitBar', 'ReturnPct'])
-    names1 = create_names(crypto_one, len(trades1.index))
-    trades1 = (pd.concat([names1, trades1], axis=1)).rename(columns={0: "Name"})
-
-    trades2 = backtest_results2["_trades"].drop(columns=['EntryBar', 'ExitBar', 'ReturnPct'])
-    names2 = create_names(crypto_two, len(trades2.index))
-    trades2 = (pd.concat([names2, trades2], axis=1)).rename(columns={0: "Name"})
-
-    final_df = combine_trades(get_trades(trades1), get_trades(trades2))
-
-    values = get_values_pair(start_date, end_date, 200000, backtest_results1, backtest_results2)
-
-    equity1 = backtest_results1['_equity_curve']["Equity"].tolist()
-    equity2 = backtest_results2['_equity_curve']["Equity"].tolist()
-    equity = [a + b for a, b in zip(equity1, equity2)]"""
     df1, df2 = get_data_dataframe(start_date, end_date, crypto_one), \
                get_data_dataframe(start_date, end_date, crypto_two)
+
     df1.name = crypto_one
     df2.name = crypto_two
-    bt = custom_backtest(df1, df2, 200000)
+    bt = custom_backtest(df1, df2, bt_params, 200000)
     final_df = get_trades_df(bt)
     equity = get_equity_curve(bt)
     values = get_values(start_date, end_date, 200000, final_df, equity)
 
-    return render_template('backtest_pair.html', title=title, crypto_one=crypto_one, crypto_two=crypto_two,
+    return render_template('backtest.html', title=title, crypto_one=crypto_one, crypto_two=crypto_two,
                            function="Backtest", labels=get_dates_string_daily(dates), equity=equity, values=values,
                            start_date=start_date, end_date=end_date, values1=avg1, values2=avg2,
-                           tables=[final_df.to_html(classes='data', header="true")])
+                           tables=[final_df.to_html(classes='bt_table', header="true", col_space=100)],
+                           df_rows=final_df, now=now, bt_params=bt_params)
 
 
-@app.route('/analyze')
+@app.route('/analyze', methods=['GET', 'POST'])
 def analyze():
     crypto_one = request.args['crypto_one']
     crypto_two = request.args['crypto_two']
@@ -96,22 +91,19 @@ def analyze():
     avg2 = get_data(start_date, end_date, crypto_two)[0]
 
     correlation = find_correlation(avg1, avg2)
-    # but there is a problem with correlation
-    # for example, if you had these two lines, you could argue that they are correlated as they are both are moving in a positive direction.
-    # but in pairs trading, a good pair will have the price of each currency move together, so when one does diverge, there is a high chance of them reconverging
-    # so, it's important to find the cointegration of both pairs. what cointegration expresses is the extent to which the distance between the two currencies will remain constant over time
-    # cointegration or something
     cointegration = find_cointegration(avg1, avg2)[1]
     final_df = find_best_pairs(start_date, end_date)
 
-    dates = get_dates(start_date, end_date, crypto_one)
+    dates = get_dates(start_date, end_date)
     return render_template('analyze.html', title=title, crypto_one=crypto_one, crypto_two=crypto_two, function="Analyze",
                            labels=get_dates_string_daily(dates), values1=avg1, values2=avg2,
                            correlation=correlation, cointegration=cointegration,
-                           tables=[final_df.to_html(classes='data', header="true")])
+                           tables=[final_df.to_html(classes='a_table', header="true", index=False,
+                                                    columns=['Coin1', 'Coin2', 'Correlation', 'Cointegration P-Value'])],
+                           df_rows=final_df, start_date=start_date, end_date=end_date, now=now)
 
 
-@app.route('/graph')
+@app.route('/graph', methods=['GET', 'POST'])
 def graph():
     crypto_one = request.args['crypto_one']
     crypto_two = request.args['crypto_two']
@@ -120,22 +112,70 @@ def graph():
 
     title = crypto_one + "-" + crypto_two + " Graph Results"
 
-    dates = get_dates(start_date, end_date, crypto_one)
-    avg1 = get_data(start_date, end_date, crypto_one)[0]
-    avg2 = get_data(start_date, end_date, crypto_two)[0]
+    dates = get_dates(start_date, end_date)
+    avg1 = get_data(start_date, end_date, crypto_one)[4]
+    avg2 = get_data(start_date, end_date, crypto_two)[4]
+
     return render_template('graph.html', title=title, crypto_one=crypto_one, crypto_two=crypto_two, function="Graph",
-                           labels=get_dates_string_daily(dates), values1=avg1, values2=avg2)
+                           labels=get_dates_string_daily(dates), values1=avg1, values2=avg2,
+                           now=now, start_date=start_date, end_date=end_date)
 
 
-@app.route('/', methods=['POST'])
-def my_form_post():
-    crypto_one = request.form['crypto_name']
-    crypto_two = request.form['crypto_name_2']
+@app.route('/handle_data', methods=['POST'])
+def handle_data():
+    crypto_one = request.form['crypto_one']
+    crypto_two = request.form['crypto_two']
     function = request.form['function']
-    start_date = request.form['startdate']
-    end_date = request.form['enddate']
+    start_date = request.form['start_date']
+    end_date = request.form['end_date']
+    """
+    ma_period
+    std_period
+    max_dur
+    entry_threshold
+    exit_threshold
+    sl_threshold
+    
+    Moving average period
+    standard deviation period
+    Maximum trading duration
+    Entry threshold
+    Exit threshold
+    Stop/Loss threshold
+    """
 
     return results(crypto_one, crypto_two, function, start_date, end_date)
+
+
+@app.route('/handle_backtest_data', methods=['POST'])
+def handle_backtest_data():
+    crypto_one = request.form['crypto_one']
+    crypto_two = request.form['crypto_two']
+    function = request.form['function']
+    start_date = request.form['start_date']
+    end_date = request.form['end_date']
+    """
+    ma_period=ma_period, std_period=std_period, max_dur=max_dur, 
+    entry_threshold=entry_threshold, exit_threshold=exit_threshold, 
+    sl_threshold=sl_threshold
+    """
+    if function == "Backtest":
+        ma_period = request.form['ma_period']
+        std_period = request.form['std_period']
+        max_dur = request.form['max_dur']
+        entry_threshold = request.form['entry_threshold']
+        exit_threshold = request.form['exit_threshold']
+        sl_threshold = request.form['sl_threshold']
+        return redirect(url_for('backtest', crypto_one=crypto_one, crypto_two=crypto_two,
+                                start_date=start_date, end_date=end_date, ma_period=ma_period, std_period=std_period,
+                                max_dur=max_dur, entry_threshold=entry_threshold, exit_threshold=exit_threshold,
+                                sl_threshold=sl_threshold
+                                ))
+
+    else:
+        return results(crypto_one, crypto_two, function, start_date, end_date)
+
+
 
 
 if __name__ == '__main__':

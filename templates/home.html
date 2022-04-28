@@ -13,52 +13,48 @@
     <h1>Pairs Trading Program</h1>
 
     <div class="home">
-        <form method="POST">
+        <form action="{{ url_for('handle_data') }}" method="POST">
+            <div class="custom-grid">
+                <select id="crypto_one" name="crypto_one" required>
+                    <option value="" disabled selected>Select currency 1</option>
+                    <option value="Bitcoin">Bitcoin</option>
+                    <option value="Ethereum">Ethereum</option>
+                    <option value="Litecoin">Litecoin</option>
+                    <option value="Bitcoin Cash">Bitcoin Cash</option>
+                    <option value="Ripple">Ripple</option>
+                </select>
 
-        <select id="crypto_name" name="crypto_name" required>
-            <option value="" disabled selected>Select currency 1</option>
-            <option value="Bitcoin">Bitcoin</option>
-            <option value="Ethereum">Ethereum</option>
-            <option value="Litecoin">Litecoin</option>
-            <option value="Bitcoin Cash">Bitcoin Cash</option>
-            <option value="Ripple">Ripple</option>
-        </select>
+                <select id="crypto_two" name="crypto_two" required>
+                    <option value="" disabled selected>Select currency 2</option>
+                    <option value="Bitcoin">Bitcoin</option>
+                    <option value="Ethereum">Ethereum</option>
+                    <option value="Litecoin">Litecoin</option>
+                    <option value="Bitcoin Cash">Bitcoin Cash</option>
+                    <option value="Ripple">Ripple</option>
+                </select>
 
-        <select id="crypto_name_2" name="crypto_name_2" required>
-            <option value="" disabled selected>Select currency 2</option>
-            <option value="Bitcoin">Bitcoin</option>
-            <option value="Ethereum">Ethereum</option>
-            <option value="Litecoin">Litecoin</option>
-            <option value="Bitcoin Cash">Bitcoin Cash</option>
-            <option value="Ripple">Ripple</option>
-        </select>
+                <select id="function" name="function" required>
+                    <option value="" disabled selected>Select function</option>
+                    <option value="Analyze">Analyze</option>
+                    <option value="Backtest">Backtest</option>
+                    <option value="Graph">Graph</option>
+                </select>
+            </div>
 
-        <select id="function" name="function" required>
-            <option value="" disabled selected>Select a function</option>
-            <option value="Backtest">Backtest</option>
-            <option value="Analyze">Analyze</option>
-            <option value="Graph">Graph</option>
-        </select>
+            <div class="custom-grid-2">
+                <label for="start_date">Start Period:</label>
+                <input type="date" id="start_date" name="start_date"
+                   value="2020-06-06"
+                   min="2018-01-01" max="{{now}}">
 
-        <h4></h4>
-        <label>Start Period:</label>
-            <input type="date" id="startdate" name="startdate"
-               value="2020-06-06"
-               min="2018-01-01" max="{{now}}">
+                <label for="end_date">End Period:</label>
+                <input type="date" id="end_date" name="end_date"
+                    value="{{now}}"
+                    min="2018-01-02" max="{{now}}">
 
-            <!-- change min and max to automatically update -->
+                <button>Submit</button>
 
-        <label>End Period:</label>
-            <input type="date" id="enddate" name="enddate"
-               value="{{now}}"
-               min="2018-01-02" max="{{now}}">
-            <!-- <input type="date" id="enddate" name="enddate"
-               value="{{now}}"
-               min="2016-01-01" max="{{now}}"> -->
-
-
-        <button>Submit</button>
-
+            </div>
         </form>
     </div>
 {% endblock %}

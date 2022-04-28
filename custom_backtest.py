@@ -20,8 +20,11 @@ def Z_SCORE(arr: pd.Series):
 
 
 class PairRatio():
-    def __init__(self, ratio, sma, std_dev, z_score, df1, df2, equity):
-        self.entry_threshold = 2
+    def __init__(self, ratio, sma, std_dev, z_score, df1, df2, equity, params):
+        ma_period, std_period, max_dur, entry_threshold, exit_threshold, sl_threshold = \
+            params[0], params[1], params[2], params[3], params[4], params[5]
+        self.entry_threshold = entry_threshold
+        self.exit_threshold = exit_threshold
         self.exit = 0
         self.downtick = 0
         self.max = 5
@@ -258,34 +261,50 @@ class Position:
                % (self.coin, self.quantity, self.type, self.date, self.close_date, self.price, self.close_price)
 
 
-def custom_backtest(df1, df2, equity):
+def custom_backtest(df1, df2, params, equity):
+    ma_period, std_period, max_dur, entry_threshold, exit_threshold, sl_threshold = \
+        params[0], params[1], params[2], params[3], params[4], params[5]
     ratio = (df1['Close'] / df2['Close']).rename("Ratio")
-    sma = SMA(ratio, 15).rename("SMA")
-    std_dev = STD_DEV(ratio, 15).rename("STD")
+    sma = SMA(ratio, ma_period).rename("SMA")
+    std_dev = STD_DEV(ratio, std_period).rename("STD")
     z_score = pd.Series((ratio - sma) / std_dev).rename("Z_SCORE")
     bt = PairRatio(ratio, sma, std_dev, z_score, df1, df2, equity)
     bt.run()
     return bt
 
 
+"""
+Moving average period
+standard deviation period
+Maximum trading duration
+Entry threshold
+Exit threshold
+Stop/Loss threshold
+"""
+
+
 def get_trades_df(bt):
     names, size, entry_price, exit_price, pnl, entry_time, exit_time, z_score, op = [], [], [], [], [], [], [], [], []
+    index = []
+    index_num = 1
     for i in bt.trades:
+        index.extend([index_num, index_num])
+        index_num += 1
         names.extend([i[0].coin, i[1].coin])
         size.extend([i[0].quantity, i[1].quantity])
-        entry_price.extend([i[0].price, i[1].price])
-        exit_price.extend([i[0].close_price, i[1].close_price])
-        pnl.extend([i[0].pnl, i[1].pnl])
-        entry_time.extend([i[0].date, i[1].date])
-        exit_time.extend([i[0].close_date, i[1].close_date])
-        z_score.extend([i[0].z_score, i[1].z_score])
+        entry_price.extend([round(i[0].price, 3), round(i[1].price, 3)])
+        exit_price.extend([round(i[0].close_price, 3), round(i[1].close_price, 3)])
+        pnl.extend([round(i[0].pnl, 3), round(i[1].pnl, 3)])
+        entry_time.extend([i[0].date.strftime('%Y-%m-%d'), i[1].date.strftime('%Y-%m-%d')])
+        exit_time.extend([i[0].close_date.strftime('%Y-%m-%d'), i[1].close_date.strftime('%Y-%m-%d')])
+        z_score.extend([round(i[0].z_score, 3), round(i[1].z_score, 3)])
         op.extend([i[0].type, i[1].type])
 
-    arr = np.array([names, op, size, entry_price, exit_price, pnl, entry_time, exit_time, z_score], dtype=object)
+    arr = np.array([index, names, op, entry_time, exit_time, size, entry_price, exit_price, pnl, z_score], dtype=object)
     arr = arr.T
     df = pd.DataFrame(arr,
-                      columns=['Name', 'Operation', 'Size', 'Entry Price', 'Exit Price', 'PnL', 'Entry Time',
-                               'Exit Time', 'Z-Score'])
+                      columns=['Index', 'Name', 'Operation', 'Entry Time', 'Exit Time',
+                               'Size', 'Entry Price', 'Exit Price', 'PnL', 'Z-Score'])
     return df
 
 

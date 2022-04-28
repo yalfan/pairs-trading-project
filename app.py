@@ -3,6 +3,7 @@ from flask import Flask, render_template, request, redirect, url_for
 from values import *
 from query_data import *
 from custom_backtest import *
+from importcoin import *
 
 app = Flask(__name__)
 
@@ -135,7 +136,7 @@ def handle_data():
     entry_threshold
     exit_threshold
     sl_threshold
-    
+
     Moving average period
     standard deviation period
     Maximum trading duration
@@ -147,6 +148,23 @@ def handle_data():
     return results(crypto_one, crypto_two, function, start_date, end_date)
 
 
+@app.route('/upload/')
+def upload():
+    return render_template('upload.html')
+
+
+@app.route('/fileupload')
+def fileUpload(crypto_csv_file, data_base_name, new_crypto):
+    importCoin(crypto_csv_file, new_crypto, new_crypto, db_url='localhost', db_port=27000)
+
+
+@app.route('/', methods=['UPLOAD'])
+def uploadCoin():
+    new_crypto = request.form['new_crypto_name']
+    crypto_csv_file = request.form['crypto_csv_file']
+    return fileUpload(new_crypto, crypto_csv_file)
+
+
 @app.route('/handle_backtest_data', methods=['POST'])
 def handle_backtest_data():
     crypto_one = request.form['crypto_one']
@@ -155,8 +173,8 @@ def handle_backtest_data():
     start_date = request.form['start_date']
     end_date = request.form['end_date']
     """
-    ma_period=ma_period, std_period=std_period, max_dur=max_dur, 
-    entry_threshold=entry_threshold, exit_threshold=exit_threshold, 
+    ma_period=ma_period, std_period=std_period, max_dur=max_dur,
+    entry_threshold=entry_threshold, exit_threshold=exit_threshold,
     sl_threshold=sl_threshold
     """
     if function == "Backtest":
@@ -176,8 +194,5 @@ def handle_backtest_data():
         return results(crypto_one, crypto_two, function, start_date, end_date)
 
 
-
-
 if __name__ == '__main__':
     app.run(debug=True)
-

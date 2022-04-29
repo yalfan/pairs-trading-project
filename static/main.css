@@ -1,6 +1,6 @@
 body {
   margin: 0;
-  padding: 0;
+  padding-bottom: 50px;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   color: #444;
 }
@@ -166,7 +166,7 @@ label[for=start_date], label[for=end_date] {
   padding: 5px 10px 10px 10px;
   border-style: solid;
   border-width: 2px;
-  margin: 25px;
+  margin-top: 10px;
   float: left;
 }
 
@@ -245,7 +245,7 @@ input[type="number"]
     grid-template-columns: 85px 130px 30px 85px 130px 30px 85px 130px 30px ;
 }
 
-.backtest-container {
+.navigation-container {
     display: grid;
     width: 100%;
     gap: 10px;

@@ -19,21 +19,17 @@ def Z_SCORE(arr: pd.Series):
     return pd.Series(arr)
 
 
-class PairRatio():
+class PairRatio:
     def __init__(self, ratio, sma, std_dev, z_score, df1, df2, equity, params):
         ma_period, std_period, max_dur, entry_threshold, exit_threshold, sl_threshold = \
             params[0], params[1], params[2], params[3], params[4], params[5]
+
         self.entry_threshold = entry_threshold
         self.exit_threshold = exit_threshold
-        self.exit = 0
-        self.downtick = 0
-        self.max = 5
-        self.ma_period = 15
-        self.type = "exponential"
-        self.std_period = 15
-        self.entry_threshold_mode = "uptick"
-        self.rsi_period = 14
-        self.rsi_threshold = 0
+        self.max_dur = max_dur
+        self.ma_period = ma_period
+        self.std_period = std_period
+        self.days_held = 0
         self.ratio = ratio
         self.sma = sma
         self.std_dev = std_dev
@@ -48,8 +44,8 @@ class PairRatio():
         self.coin2 = df2.name
         self.df1 = df1
         self.df2 = df2
-        self.i = 0
         self.equity = equity
+        self.i = 0
         self.portfolio = 0
         self.portfolio_values = []
         self.today = datetime.datetime.today().date()
@@ -268,7 +264,7 @@ def custom_backtest(df1, df2, params, equity):
     sma = SMA(ratio, ma_period).rename("SMA")
     std_dev = STD_DEV(ratio, std_period).rename("STD")
     z_score = pd.Series((ratio - sma) / std_dev).rename("Z_SCORE")
-    bt = PairRatio(ratio, sma, std_dev, z_score, df1, df2, equity)
+    bt = PairRatio(ratio, sma, std_dev, z_score, df1, df2, equity, params)
     bt.run()
     return bt
 

@@ -21,7 +21,7 @@
         {% endif %}
 
         <form action="{{ url_for('handle_backtest_data') }}" method="POST">
-            <div class="backtest-container">
+            <div class="navigation-container">
 
                 <div class="custom-grid">
                     <select id="crypto_one" name="crypto_one" required>
@@ -132,15 +132,15 @@
 
         <div class="grid">
             <div class="longbox">
-            <h2>{{crypto_one}} and {{crypto_two}} Pairs Backtest</h2>
-            <p>Initial Capital: {{values['initial']}}</p>
-            <p>Total net P/L: {{values['total_pl']}}</p>
-            <p>CAGR: {{values['cagr']}}</p>
-            <p>Start Date: {{ start_date }}</p>
-            <p>End Date: {{ end_date }}</p>
-            <p>Total Transactions: {{values['trades']}}</p>
-            <p>Final Equity: {{values['final']}}</p>
-            <p>Total ROI: {{values['roi']}}</p>
+                <h2>{{crypto_one}} and {{crypto_two}} Pairs Backtest</h2>
+                <p>Initial Capital: {{values['initial']}}</p>
+                <p>Total net P/L: {{values['total_pl']}}</p>
+                <p>CAGR: {{values['cagr']}}</p>
+                <p>Start Date: {{ start_date }}</p>
+                <p>End Date: {{ end_date }}</p>
+                <p>Total Transactions: {{values['trades']}}</p>
+                <p>Final Equity: {{values['final']}}</p>
+                <p>Total ROI: {{values['roi']}}</p>
             </div>
 
             <div class="chart-container">

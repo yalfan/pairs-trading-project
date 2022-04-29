@@ -21,45 +21,47 @@
     {% endif %}
 
     <form action="{{ url_for('handle_data') }}" method="POST">
-        <div class="custom-grid">
-            <select id="crypto_one" name="crypto_one" required>
-            <option value="" disabled selected>Select currency 1</option>
-            <option value="Bitcoin">Bitcoin</option>
-            <option value="Ethereum">Ethereum</option>
-            <option value="Litecoin">Litecoin</option>
-            <option value="Bitcoin Cash">Bitcoin Cash</option>
-            <option value="Ripple">Ripple</option>
-        </select>
+        <div class="navigation-container">
+            <div class="custom-grid-2">
+                <label for="start_date">Start Period:</label>
+                <input type="date" id="start_date" name="start_date"
+                   value="2020-06-06"
+                   min="2018-01-01" max="{{now}}">
 
-            <select id="crypto_two" name="crypto_two" required>
-            <option value="" disabled selected>Select currency 2</option>
-            <option value="Bitcoin">Bitcoin</option>
-            <option value="Ethereum">Ethereum</option>
-            <option value="Litecoin">Litecoin</option>
-            <option value="Bitcoin Cash">Bitcoin Cash</option>
-            <option value="Ripple">Ripple</option>
-        </select>
+                <label for="end_date">End Period:</label>
+                <input type="date" id="end_date" name="end_date"
+                    value="{{now}}"
+                    min="2018-01-02" max="{{now}}">
 
-            <select id="function" name="function" required>
-                <option value="" disabled selected>Select function</option>
-                <option value="Analyze">Analyze</option>
-                <option value="Backtest">Backtest</option>
-                <option value="Graph">Graph</option>
-            </select>
-        </div>
+                <button>Submit</button>
+            </div>
 
-        <div class="custom-grid-2">
-            <label for="start_date">Start Period:</label>
-            <input type="date" id="start_date" name="start_date"
-               value="2020-06-06"
-               min="2018-01-01" max="{{now}}">
+            <div class="custom-grid">
+                <select id="crypto_one" name="crypto_one" required>
+                    <option value="" disabled selected>Select currency 1</option>
+                    <option value="Bitcoin">Bitcoin</option>
+                    <option value="Ethereum">Ethereum</option>
+                    <option value="Litecoin">Litecoin</option>
+                    <option value="Bitcoin Cash">Bitcoin Cash</option>
+                    <option value="Ripple">Ripple</option>
+                </select>
 
-            <label for="end_date">End Period:</label>
-            <input type="date" id="end_date" name="end_date"
-                value="{{now}}"
-                min="2018-01-02" max="{{now}}">
+                <select id="crypto_two" name="crypto_two" required>
+                    <option value="" disabled selected>Select currency 2</option>
+                    <option value="Bitcoin">Bitcoin</option>
+                    <option value="Ethereum">Ethereum</option>
+                    <option value="Litecoin">Litecoin</option>
+                    <option value="Bitcoin Cash">Bitcoin Cash</option>
+                    <option value="Ripple">Ripple</option>
+                </select>
 
-            <button>Submit</button>
+                <select id="function" name="function" required>
+                    <option value="" disabled selected>Select function</option>
+                    <option value="Analyze">Analyze</option>
+                    <option value="Backtest">Backtest</option>
+                    <option value="Graph">Graph</option>
+                </select>
+            </div>
         </div>
     </form>
 

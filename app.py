@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for
+from werkzeug.utils import secure_filename
 
 from values import *
 from query_data import *
@@ -148,15 +149,20 @@ def handle_data():
     return results(crypto_one, crypto_two, function, start_date, end_date)
 
 
-@app.route('/upload/')
+@app.route('/upload')
 def upload():
     return render_template('upload.html')
 
-@app.route('/', methods=['GET'])
+
+@app.route('/uploader', methods=['GET', 'POST'])
 def uploadCoin():
-    crypto_csv_file = request.form['crypto_csv_file']
+    crypto_csv_file = request.files['crypto_csv_file']
     new_crypto = request.form['new_crypto_name']
-    return importCoin(crypto_csv_file, new_crypto)
+    crypto_csv_file.save(secure_filename(crypto_csv_file.filename))
+    # return importCoin(crypto_csv_file, new_crypto)
+    print(crypto_csv_file)
+    print(type(crypto_csv_file))
+    return 'wozers saved file'
 
 
 @app.route('/handle_backtest_data', methods=['POST'])

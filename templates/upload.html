@@ -13,9 +13,9 @@
 
     <div class="home">
         <p>Upload a .csv file here.</p>
-        <form method="GET">
-            <input type="file" id="crypto_csv_file" name="crypto_csv_file" accept=".csv"> <br></br>
-            <label for="cryptoname">Currency:</label>
+        <form action="/uploader" method="POST" enctype = "multipart/form-data">
+            <input type="file" id="crypto_csv_file" name="crypto_csv_file" accept=".csv">
+            <label for="new_crypto_name">Currency:</label>
             <input type="text" id="new_crypto_name" name="new_crypto_name">
             <input type="submit">
         </form>

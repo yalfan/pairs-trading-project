@@ -152,17 +152,11 @@ def handle_data():
 def upload():
     return render_template('upload.html')
 
-
-@app.route('/fileupload')
-def fileUpload(crypto_csv_file, data_base_name, new_crypto):
-    importCoin(crypto_csv_file, new_crypto, new_crypto, db_url='localhost', db_port=27000)
-
-
-@app.route('/', methods=['UPLOAD'])
+@app.route('/', methods=['GET'])
 def uploadCoin():
-    new_crypto = request.form['new_crypto_name']
     crypto_csv_file = request.form['crypto_csv_file']
-    return fileUpload(new_crypto, crypto_csv_file)
+    new_crypto = request.form['new_crypto_name']
+    return importCoin(crypto_csv_file, new_crypto)
 
 
 @app.route('/handle_backtest_data', methods=['POST'])

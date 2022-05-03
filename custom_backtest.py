@@ -29,6 +29,9 @@ class PairRatio:
         self.max_dur = max_dur
         self.ma_period = ma_period
         self.std_period = std_period
+        self.sl_threshold = sl_threshold
+        self.purchase_price1 = 0
+        self.purchase_price2 = 0
         self.days_held = 0
         self.ratio = ratio
         self.sma = sma
@@ -49,6 +52,7 @@ class PairRatio:
         self.portfolio = 0
         self.portfolio_values = []
         self.today = datetime.datetime.today().date()
+        # less or more
         self.lom = {
             self.coin1: "Less" if self.prices1[0] < self.prices2[0] else "More",
             self.coin2: "Less" if self.prices2[0] < self.prices1[0] else "More"
@@ -57,6 +61,8 @@ class PairRatio:
             self.coin1: self.df1,
             self.coin2: self.df2
         }
+        if self.max_dur == 0:
+            self.max_dur = len(self.dates)
 
     def run(self):
         for i in range(len(self.dates)):
@@ -70,8 +76,10 @@ class PairRatio:
                     self.long_short(self.coin1, self.coin2)
             elif self.open_position:
                 action = self.get_action(self.coin1)
-                if action == "Close":
+                if action == "Close" or self.stop_loss_action() or self.days_held >= self.max_dur:
                     self.close()
+                else:
+                    self.days_held += 1
             if self.dates[i].date() == self.today and self.open_position:
                 self.close()
             self.update_portfolio()
@@ -86,7 +94,11 @@ class PairRatio:
         # y = int(value / (prices2[self.i]))  # Find the number of shares for Stock2
         x = round((value / (prices1[self.i])), 2)  # Find the number of shares for Stock1
         y = round((value / (prices2[self.i])), 2)  # Find the number of shares for Stock2
-        position1 = Position(self.dates[self.i], prices1[self.i], x, "Short", coin1, self.z_scores[self.i])  # Short coin1
+        self.purchase_price1 = prices1[self.i]
+        self.purchase_price2 = prices2[self.i]
+        # date, price, quantity, type, coin, z_score
+        position1 = Position(self.dates[self.i], prices1[self.i], x, "Short", coin1,
+                             self.z_scores[self.i])  # Short coin1
         position2 = Position(self.dates[self.i], prices2[self.i], y, "Long", coin2, self.z_scores[self.i])  # Long coin2
         self.equity = self.equity + x * self.prices1[self.i] - y * self.prices2[self.i]  # add short, subtract long
         self.trades.append([position1, position2])
@@ -104,6 +116,8 @@ class PairRatio:
         # y = int(value / (prices2[self.i]))  # Find the number of shares for Stock2
         x = round((value / (prices1[self.i])), 2)  # Find the number of shares for Stock1
         y = round((value / (prices2[self.i])), 2)  # Find the number of shares for Stock2
+        self.purchase_price1 = prices1[self.i]
+        self.purchase_price2 = prices2[self.i]
         position1 = Position(self.dates[self.i], prices1[self.i], x, "Long", coin1, self.z_scores[self.i])  # Long coin1
         position2 = Position(self.dates[self.i], prices2[self.i], y, "Short", coin2, self.z_scores[self.i])  # Short coin2
         self.equity = self.equity - x * self.prices1[self.i] + y * self.prices2[self.i]  # add short, subtract long
@@ -145,6 +159,7 @@ class PairRatio:
         self.close_long(pos1) if pos1.type == "Long" else self.close_short(pos1)
         self.close_long(pos2) if pos2.type == "Long" else self.close_short(pos2)
         self.update_positions()
+        self.days_held = 0
         # print("after close: ", self.equity)
 
     def close_long(self, pos):
@@ -158,12 +173,22 @@ class PairRatio:
         self.equity -= abs(self.portfolio)
 
     def update_positions(self):
-        pt1 = self.trades[-1][0]
-        pt2 = self.trades[-1][1]
-        pt1.set_close_date(self.dates[self.i])
-        pt1.set_close_price(self.coins.get(pt1.coin)['Close'][self.i])
-        pt2.set_close_date(self.dates[self.i])
-        pt2.set_close_price(self.coins.get(pt2.coin)['Close'][self.i])
+        # ClosePosition(date, entry_price, exit_price, quantity, type, coin, z_score)
+        # p1, p2 = current positions
+        # close1, close2 = close actions
+        p1 = self.trades[-1][0]
+        close1 = ClosePosition(self.dates[self.i], p1.entry_price,
+                               self.coins.get(p1.coin)['Close'][self.i],
+                               p1.quantity, p1.type, p1.coin, self.z_scores[self.i])
+        close1.set_pnl_operation()
+
+        p2 = self.trades[-1][1]
+        close2 = ClosePosition(self.dates[self.i], p2.entry_price,
+                               self.coins.get(p2.coin)['Close'][self.i],
+                               p2.quantity, p2.type, p2.coin, self.z_scores[self.i])
+        close2.set_pnl_operation()
+
+        self.trades.append([close1, close2])
         self.position.clear()
         self.open_position = False
 
@@ -178,19 +203,21 @@ class PairRatio:
 
     def update_long(self, coin):
         self.portfolio = coin.quantity * self.coins.get(coin.coin)['Close'][self.i]
-        portfolio_value = self.equity + self.portfolio - coin.quantity * coin.price
+        portfolio_value = self.equity + self.portfolio - coin.quantity * coin.entry_price
         self.portfolio_values.append(portfolio_value)
 
     def update_short(self, coin):
         self.portfolio = coin.quantity * self.coins.get(coin.coin)['Close'][self.i]
-        portfolio_value = self.equity - self.portfolio + coin.quantity * coin.price
+        portfolio_value = self.equity - self.portfolio + coin.quantity * coin.entry_price
         self.portfolio_values.append(portfolio_value)
 
     def update_portfolio_values(self, c1, c2):
+        # curr = current value
         curr1 = c1.quantity * self.coins.get(c1.coin)['Close'][self.i]
         curr2 = c2.quantity * self.coins.get(c2.coin)['Close'][self.i]
-        iv1 = c1.quantity * c1.price
-        iv2 = c2.quantity * c2.price
+        # iv = initial value
+        iv1 = c1.quantity * c1.entry_price
+        iv2 = c2.quantity * c2.entry_price
         portfolio_value = self.equity + (curr1 - iv1) - (curr2 - iv2) if c1.type == "Long" else \
             self.equity - (curr1 - iv1) + (curr2 - iv2)
         self.portfolio_values.append(portfolio_value)
@@ -229,32 +256,55 @@ class PairRatio:
             return "Close"
         return "Nothing"
 
+    def stop_loss_action(self):
+        # if default stop/loss, don't use stop loss
+        if self.sl_threshold == 0:
+            return False
+        c1, c2 = self.position[0], self.position[1]
+        curr1 = c1.quantity * self.coins.get(c1.coin)['Close'][self.i]
+        curr2 = c2.quantity * self.coins.get(c2.coin)['Close'][self.i]
+
+        if curr1 < c1.quantity * self.purchase_price1 * (1 - self.sl_threshold) or \
+                curr1 > c1.quantity * self.purchase_price1 * (1 + self.sl_threshold) or \
+                curr2 < c2.quantity * self.purchase_price2 * (1 - self.sl_threshold) or \
+                curr2 > c2.quantity * self.purchase_price2 * (1 + self.sl_threshold):
+
+            print(curr1, self.purchase_price1 * (1 - self.sl_threshold), self.purchase_price1 * (1 + self.sl_threshold))
+            print(curr2, self.purchase_price2 * (1 - self.sl_threshold), self.purchase_price2 * (1 + self.sl_threshold))
+            return True
+
 
 class Position:
     def __init__(self, date, price, quantity, type, coin, z_score):
         self.date = date
-        self.price = price
+        self.entry_price = price
         self.quantity = quantity
         self.type = type
         self.coin = coin
-        self.close_date = date
-        self.close_price = price
         self.pnl = 0
         self.z_score = z_score
+        self.exit_price = 0
 
-    def set_close_date(self, close_date):
-        self.close_date = close_date
 
-    def set_close_price(self, close_price):
-        self.close_price = close_price
+class ClosePosition:
+    def __init__(self, date, entry_price, exit_price, quantity, type, coin, z_score):
+        self.entry_price = entry_price
+        self.quantity = quantity
+        self.type = type
+        self.coin = coin
+        self.date = date
+        self.z_score = z_score
+        self.exit_price = exit_price
+        # gets profit and loss than
+        self.pnl = 0
+
+    def set_pnl_operation(self):
         if self.type == "Long":
-            self.pnl = self.quantity * self.close_price - self.quantity * self.price
+            self.pnl = self.quantity * self.exit_price - self.quantity * self.entry_price
+            self.type = "Close"
         elif self.type == "Short":
-            self.pnl = self.quantity * self.price - self.quantity * self.close_price
-
-    def to_string(self):
-        return "Coin: %s, Quantity: %s, Type: %s, Open Date: %s, Close Date: %s, Open Price: %s, Close Price: %s"\
-               % (self.coin, self.quantity, self.type, self.date, self.close_date, self.price, self.close_price)
+            self.pnl = self.quantity * self.entry_price - self.quantity * self.exit_price
+            self.type = "Close"
 
 
 def custom_backtest(df1, df2, params, equity):
@@ -288,19 +338,18 @@ def get_trades_df(bt):
         index_num += 1
         names.extend([i[0].coin, i[1].coin])
         size.extend([i[0].quantity, i[1].quantity])
-        entry_price.extend([round(i[0].price, 3), round(i[1].price, 3)])
-        exit_price.extend([round(i[0].close_price, 3), round(i[1].close_price, 3)])
+        entry_price.extend([round(i[0].entry_price, 3), round(i[1].entry_price, 3)])
+        exit_price.extend([round(i[0].exit_price, 3), round(i[1].exit_price, 3)])
         pnl.extend([round(i[0].pnl, 3), round(i[1].pnl, 3)])
         entry_time.extend([i[0].date.strftime('%Y-%m-%d'), i[1].date.strftime('%Y-%m-%d')])
-        exit_time.extend([i[0].close_date.strftime('%Y-%m-%d'), i[1].close_date.strftime('%Y-%m-%d')])
+#        exit_time.extend([i[0].close_date.strftime('%Y-%m-%d'), i[1].close_date.strftime('%Y-%m-%d')])
         z_score.extend([round(i[0].z_score, 3), round(i[1].z_score, 3)])
         op.extend([i[0].type, i[1].type])
 
-    arr = np.array([index, names, op, entry_time, exit_time, size, entry_price, exit_price, pnl, z_score], dtype=object)
+    arr = np.array([index, names, op, entry_time, size, entry_price, exit_price, pnl, z_score], dtype=object)
     arr = arr.T
-    df = pd.DataFrame(arr,
-                      columns=['Index', 'Name', 'Operation', 'Entry Time', 'Exit Time',
-                               'Size', 'Entry Price', 'Exit Price', 'PnL', 'Z-Score'])
+    df = pd.DataFrame(arr, columns=['Index', 'Name', 'Operation', 'Date',
+                                    'Size', 'Entry Price', 'Exit Price', 'PnL', 'Z-Score'])
     return df
 
 

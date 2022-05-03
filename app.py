@@ -14,7 +14,7 @@ colors = [
     "#ABCDEF", "#DDDDDD", "#ABCABC", "#4169E1",
     "#C71585", "#FF4500", "#FEDCBA", "#46BFBD"]
 
-now = datetime.datetime.now().date()
+now = (datetime.datetime.today() - datetime.timedelta(days=1)).date()
 
 @app.route('/')
 def home():
@@ -155,7 +155,7 @@ def upload():
 
 
 @app.route('/uploader', methods=['GET', 'POST'])
-def uploadCoin():
+def upload_coin():
     crypto_csv_file = request.files['crypto_csv_file']
     new_crypto = request.form['new_crypto_name']
     crypto_csv_file.save(secure_filename(crypto_csv_file.filename))

@@ -7,7 +7,7 @@ from yahoofinancials import YahooFinancials
 
 def update_csv_db(symbol, lastdate, coin):
     yahoo_financials = YahooFinancials(symbol)
-    today = datetime.datetime.today().strftime('%Y-%m-%d')
+    today = (datetime.datetime.today() - datetime.timedelta(days=1)).strftime('%Y-%m-%d')
     lastdate = (lastdate + datetime.timedelta(days=1)).strftime('%Y-%m-%d')
     data = yahoo_financials.get_historical_price_data(lastdate, today, "daily")
     df = pd.DataFrame(data[symbol]['prices'])
@@ -32,6 +32,7 @@ def update_csv_db(symbol, lastdate, coin):
         }
         data_to_upload.append(element)
     coin.insert_many(data_to_upload)
+    print("updated data uploaded")
     df.to_csv('data/%s_dailydata.csv' % symbol,mode='a', index=False, header=False)
 
 
@@ -76,7 +77,7 @@ if __name__ == "__main__":
     }
     # we set which pair we want to retrieve data for
     symbols = ["BTC-USD", "ETH-USD", "LTC-USD", "XRP-USD", "BCH-USD"]
-    today = datetime.datetime.today().strftime('%Y-%m-%d')
+    today = (datetime.datetime.today() - datetime.timedelta(days=1)).strftime('%Y-%m-%d')
     for symbol in symbols:
         file_name = 'data/%s_dailydata.csv' % symbol
         sheet = pd.read_csv(file_name)
@@ -87,10 +88,8 @@ if __name__ == "__main__":
                 last_date += last_line[i]
         if last_date != today:
             last_date = datetime.datetime.strptime(last_date, "%Y-%m-%d")
-            print("updated %s" % file_name)
-            update_csv_db(symbol, last_date, coins[symbol])
+            # print("updated %s" % file_name)
+            # update_csv_db(symbol, last_date, coins[symbol])
 
         upload_csvs(sheet, coins[symbol])
         print("uploaded %s" % symbol)
-
-

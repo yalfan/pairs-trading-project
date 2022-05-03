@@ -98,20 +98,22 @@ def get_data(date1, date2, coin_string):
 
 
 def get_data_dataframe(d1, d2, coin_string):
+    # d1, d2 = date1/2
     # get dates
     dates = np.array(get_dates(d1, d2))
     # dates = np.flip(dates)
 
     # get values
     avg1, open1, high1, low1, close1, volume1, open_interest = np.array(get_data(d1, d2, coin_string))
+    vals = np.array(get_data(d1, d2, coin_string))
 
     # make array
-    arr = np.array([dates, open1, high1, low1, close1, volume1, open_interest], dtype=object)
+    # arr = np.array([dates, open1, high1, low1, close1, volume1, open_interest], dtype=object)
+    arr = np.array(vals, dtype=object)
     arr = arr.T
-
     # make data frame
-    df = pd.DataFrame(arr,  columns=['Date', 'Open', 'High', 'Low', 'Close', 'Volume', 'Open Interest'])
-    df.set_index('Date', inplace=True, drop=True)
+    df = pd.DataFrame(arr,  columns=['Average', 'Open', 'High', 'Low', 'Close', 'Volume', 'Open Interest'], index=dates)
+    # df.set_index('Date', inplace=True, drop=True)
     return df
 
 
@@ -134,7 +136,7 @@ def check_dates(coin_string):
         "XRP-USD": xrp,
         "BCH-USD": bch
     }
-    today = datetime.datetime.today().strftime('%Y-%m-%d')
+    today = (datetime.datetime.today() - datetime.timedelta(days=1)).strftime('%Y-%m-%d')
     coin = coins[coin_string]
     last_date = coin.find().limit(1).sort([('$natural', -1)])[0]['Date'].date()
     first_date = coin.find()[0]['Date'].date()

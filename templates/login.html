@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Pairs Trading Program</title>
+</head>
+
+<body>
+{% extends "layout.html" %}
+{% block content %}
+
+    <h1>Pairs Trading Program</h1>
+
+    <div class="home">
+        <p>Please login here:</p>
+        <form>
+            <label for="username">Username:</label>
+            <input type="text" id="usernameLogin" name="username">
+            <label for="password">Password:</label>
+            <input type="password" id="passwordLogin" name="password">
+            <input type="submit">
+        </form>
+    </div>
+    <a href="http://127.0.0.1:5000/">
+    <button>Use as Guest</button>
+</a>
+{% endblock %}
+</body>
+</html>

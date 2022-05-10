@@ -21,6 +21,10 @@ now = (datetime.datetime.today() - datetime.timedelta(days=1)).date()
 def home():
     return render_template('home.html', now=now)
 
+@app.route('/login')
+def login():
+    return render_template('login.html')
+
 
 @app.route('/about/')
 def about():

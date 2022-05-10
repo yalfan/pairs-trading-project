@@ -1,3 +1,4 @@
+import os
 from flask import Flask, render_template, request, redirect, url_for
 from werkzeug.utils import secure_filename
 
@@ -156,10 +157,13 @@ def upload():
 
 @app.route('/uploader', methods=['GET', 'POST'])
 def upload_coin():
+    os.makedirs(os.path.join(app.instance_path, 'uploadeddata'), exist_ok=True)
     crypto_csv_file = request.files['crypto_csv_file']
     new_crypto = request.form['new_crypto_name']
-    crypto_csv_file.save(secure_filename(crypto_csv_file.filename))
-    # return importCoin(crypto_csv_file, new_crypto)
+    filename = secure_filename(crypto_csv_file.filename)
+    filename_path = 'instance/uploadeddata/%s.csv' % new_crypto
+    crypto_csv_file.save(os.path.join(app.instance_path, 'uploadeddata', filename))
+    importCoin(filename_path, new_crypto)
     print(crypto_csv_file)
     print(type(crypto_csv_file))
     return 'wozers saved file'

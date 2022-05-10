@@ -170,7 +170,7 @@ def upload_coin():
     importCoin(filename_path, new_crypto)
     print(crypto_csv_file)
     print(type(crypto_csv_file))
-    return 'wozers saved file'
+    return 'FILE UPLOADED TO DATABASE'
 
 
 @app.route('/handle_backtest_data', methods=['POST'])

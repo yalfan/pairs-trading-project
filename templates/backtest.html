@@ -20,88 +20,10 @@
         <h1>Results</h1>
         {% endif %}
 
-        <form action="{{ url_for('handle_backtest_data') }}" method="POST">
+        <form action="{{ url_for('handle_backtest_data') }}" method="POST"> <!--  action="{{ url_for('handle_backtest_data') }}"  -->
+            {{ form.csrf_token }}
+
             <div class="navigation-container">
-
-                <div class="custom-grid">
-                    <select id="crypto_one" name="crypto_one" required>
-                        <option value="" disabled>Select currency 1</option>
-                        {% if crypto_one == 'Bitcoin' %}
-                        <option value="Bitcoin" selected>Bitcoin</option>
-                        <option value="Ethereum">Ethereum</option>
-                        <option value="Litecoin">Litecoin</option>
-                        <option value="Bitcoin Cash">Bitcoin Cash</option>
-                        <option value="Ripple">Ripple</option>
-                        {% elif crypto_one == 'Ethereum' %}
-                        <option value="Bitcoin">Bitcoin</option>
-                        <option value="Ethereum" selected>Ethereum</option>
-                        <option value="Litecoin">Litecoin</option>
-                        <option value="Bitcoin Cash">Bitcoin Cash</option>
-                        <option value="Ripple">Ripple</option>
-                        {% elif crypto_one == 'Litecoin' %}
-                        <option value="Bitcoin">Bitcoin</option>
-                        <option value="Ethereum">Ethereum</option>
-                        <option value="Litecoin" selected>Litecoin</option>
-                        <option value="Bitcoin Cash">Bitcoin Cash</option>
-                        <option value="Ripple">Ripple</option>
-                        {% elif crypto_one == 'Bitcoin Cash' %}
-                        <option value="Bitcoin">Bitcoin</option>
-                        <option value="Ethereum">Ethereum</option>
-                        <option value="Litecoin">Litecoin</option>
-                        <option value="Bitcoin Cash" selected>Bitcoin Cash</option>
-                        <option value="Ripple">Ripple</option>
-                        {% elif crypto_one == 'Ripple' %}
-                        <option value="Bitcoin">Bitcoin</option>
-                        <option value="Ethereum">Ethereum</option>
-                        <option value="Litecoin">Litecoin</option>
-                        <option value="Bitcoin Cash">Bitcoin Cash</option>
-                        <option value="Ripple" selected>Ripple</option>
-                        {% endif %}
-                    </select>
-
-                    <select id="crypto_two" name="crypto_two" required>
-                    <option value="" disabled selected>Select currency 2</option>
-                        {% if crypto_two == 'Bitcoin' %}
-                        <option value="Bitcoin" selected>Bitcoin</option>
-                        <option value="Ethereum">Ethereum</option>
-                        <option value="Litecoin">Litecoin</option>
-                        <option value="Bitcoin Cash">Bitcoin Cash</option>
-                        <option value="Ripple">Ripple</option>
-                        {% elif crypto_two == 'Ethereum' %}
-                        <option value="Bitcoin">Bitcoin</option>
-                        <option value="Ethereum" selected>Ethereum</option>
-                        <option value="Litecoin">Litecoin</option>
-                        <option value="Bitcoin Cash">Bitcoin Cash</option>
-                        <option value="Ripple">Ripple</option>
-                        {% elif crypto_two == 'Litecoin' %}
-                        <option value="Bitcoin">Bitcoin</option>
-                        <option value="Ethereum">Ethereum</option>
-                        <option value="Litecoin" selected>Litecoin</option>
-                        <option value="Bitcoin Cash">Bitcoin Cash</option>
-                        <option value="Ripple">Ripple</option>
-                        {% elif crypto_two == 'Bitcoin Cash' %}
-                        <option value="Bitcoin">Bitcoin</option>
-                        <option value="Ethereum">Ethereum</option>
-                        <option value="Litecoin">Litecoin</option>
-                        <option value="Bitcoin Cash" selected>Bitcoin Cash</option>
-                        <option value="Ripple">Ripple</option>
-                        {% elif crypto_two == 'Ripple' %}
-                        <option value="Bitcoin">Bitcoin</option>
-                        <option value="Ethereum">Ethereum</option>
-                        <option value="Litecoin">Litecoin</option>
-                        <option value="Bitcoin Cash">Bitcoin Cash</option>
-                        <option value="Ripple" selected>Ripple</option>
-                        {% endif %}
-                </select>
-
-                    <select id="function" name="function" required>
-                        <option value="" disabled>Select function</option>
-                        <option value="Analyze">Analyze</option>
-                        <option value="Backtest" selected>Backtest</option>
-                        <option value="Graph">Graph</option>
-                    </select>
-                </div>
-
                 <!--
                 Moving average period
                 standard deviation period
@@ -110,32 +32,58 @@
                 Exit threshold
                 Stop/Loss threshold
                 -->
+                <div class="custom-grid">
+                    <p>
+                        {{ form.coin1 }}
+                    </p>
+
+                    <p>
+                        {{ form.coin2 }}
+                    </p>
+
+                    <p>
+                        {{ form.function }}
+                    </p>
+                </div>
+
                 <div class="custom-grid-3">
-                    <label for="ma_period">Moving Average Period:</label>
-                    <input type="number" id="ma_period" name="ma_period" value="{{bt_params[0]}}" min="10" max="100">
+                    <p>
+                        {{ form.ma_period.label }}
+                        {{ form.ma_period }}
+                    </p>
 
-                    <label for="std_period">Standard Deviation Period:</label>
-                    <input type="number" id="std_period" name="std_period" value="{{bt_params[1]}}" min="10" max="100">
+                    <p>
+                        {{ form.std_period.label }}
+                        {{ form.std_period }}
+                    </p>
 
-                    <label for="max_dur">Maximum Trading Duration:</label>
-                    <input type="number" id="max_dur" name="max_dur" value="{{bt_params[2]}}" min="0" max="100">
-
+                    <p>
+                        {{ form.max_duration.label }}
+                        {{ form.max_duration }}
+                    </p>
 
                 </div>
 
                 <div class="custom-grid-4">
-                    <label for="entry_threshold">Entry Threshold:</label>
-                    <input type="range" step="0.1" min="0.2" max="3" value="{{bt_params[3]}}" class="slider" id="entry_threshold" name="entry_threshold">
-                    <span id="entry_out"></span>
+                    <p>
+                        {{ form.entry_threshold.label }}
+                        {{ form.entry_threshold }}
+                        <span id="entry_out"></span>
+                    </p>
 
 
-                    <label for="exit_threshold">Exit Threshold:</label>
-                    <input type="range" step="0.1" min="0.1" max="2" value="{{bt_params[4]}}" class="slider" id="exit_threshold" name="exit_threshold">
-                    <span id="exit_out"></span>
+                    <p>
+                        {{ form.exit_threshold.label }}
+                        {{ form.exit_threshold }}
+                        <span id="exit_out"></span>
+                    </p>
 
-                    <label for="sl_threshold">Stop/Loss Threshold:</label>
-                    <input type="range" step="0.1" min="0" max="1" value="{{bt_params[5]}}" class="slider" id="sl_threshold" name="sl_threshold">
-                    <span id="sl_out"></span>
+                    <p>
+                        {{ form.sl_threshold.label }}
+                        {{ form.sl_threshold }}
+                        <span id="sl_out"></span>
+                    </p>
+
 
                     <script>
                         var slider = document.getElementById("entry_threshold");
@@ -143,7 +91,7 @@
                         output.innerHTML = slider.value;
 
                         slider.oninput = function() {
-                        output.innerHTML = this.value;
+                        output.innerHTML = Math.round(this.value * 10) / 10;
                         }
 
                         var slider2 = document.getElementById("exit_threshold");
@@ -151,7 +99,7 @@
                         output2.innerHTML = slider2.value;
 
                         slider2.oninput = function() {
-                        output2.innerHTML = this.value;
+                        output2.innerHTML = Math.round(this.value * 10) / 10;
                         }
 
                         var slider3 = document.getElementById("sl_threshold");
@@ -159,14 +107,14 @@
                         output3.innerHTML = slider3.value;
 
                         slider3.oninput = function() {
-                        output3.innerHTML = this.value;
+                        output3.innerHTML = Math.round(this.value * 10) / 10;
                         }
                     </script>
+
                 </div>
 
-
                 <div class="custom-grid-2">
-                    <label for="start_date">Start Period:</label>
+                    <!--<label for="start_date">Start Period:</label>
                     <input type="date" id="start_date" name="start_date"
                        value="2020-06-06"
                        min="2018-01-01" max="{{now}}">
@@ -174,11 +122,44 @@
                     <label for="end_date">End Period:</label>
                     <input type="date" id="end_date" name="end_date"
                         value="{{now}}"
-                        min="2018-01-02" max="{{now}}">
+                        min="2018-01-02" max="{{now}}">-->
 
-                    <button>Submit</button>
+                    <p>
+                        {{ form.date1.label }}
+                        {{ form.date1 }}
+                    </p>
 
+                    <p>
+                        {{ form.date2.label }}
+                        {{ form.date2 }}
+                    </p>
+
+                    <button onclick="return Validate();">Submit</button>
+                    <script>
+                        function Validate() {
+                            var date1 = document.getElementById("date1").value;
+                            var date2 = document.getElementById("date2").value;
+                            var entry_threshold = document.getElementById("entry_threshold").value;
+                            var exit_threshold = document.getElementById("exit_threshold").value;
+                            var message = "";
+                            var error = false;
+                            if (date1 > date2) {
+                                message += "Start date must be earlier than end date. "
+                                error = true;
+                            }
+                            if (exit_threshold > entry_threshold) {
+                                message += "Entry threshold must be greater than exit threshold."
+                                error = true;
+                            }
+                            if (error) {
+                                alert(message);
+                                return false;
+                            }
+                            return true;
+                        }
+                    </script>
                 </div>
+
             </div>
         </form>
 

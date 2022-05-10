@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>{% block title %} Add a New Course {% endblock %}</h1>
+
+    <form method="POST" action="/">
+        {{ form.csrf_token }}
+        <p>
+            {{ form.coin1.label }}
+            {{ form.coin1 }}
+        </p>
+
+        <p>
+            {{ form.coin2.label }}
+        </p>
+        {{ form.coin2 }}
+
+
+        <p>
+            {{ form.function.label }}
+            {{ form.function }}
+        </p>
+
+
+        <p>
+            {{ form.date1 }} {{ form.date1.label }}
+        </p>
+
+
+        <p>
+            {{ form.date2.label }}
+            {{ form.date2 }}
+        </p>
+
+
+        <p>
+            <input type="submit" value="Add">
+        </p>
+    </form>
+
+{% endblock %}

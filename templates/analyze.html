@@ -20,89 +20,51 @@
     <h1>Results</h1>
     {% endif %}
 
-    <form action="{{ url_for('handle_data') }}" method="POST">
+    <form action="/" method="POST">
+        {{ form.csrf_token }}
+
         <div class="navigation-container">
 
             <div class="custom-grid">
-                                    <select id="crypto_one" name="crypto_one" required>
-                        <option value="" disabled>Select currency 1</option>
-                        {% if crypto_one == 'Bitcoin' %}
-                        <option value="Bitcoin" selected>Bitcoin</option>
-                        <option value="Ethereum">Ethereum</option>
-                        <option value="Litecoin">Litecoin</option>
-                        <option value="Bitcoin Cash">Bitcoin Cash</option>
-                        <option value="Ripple">Ripple</option>
-                        {% elif crypto_one == 'Ethereum' %}
-                        <option value="Bitcoin">Bitcoin</option>
-                        <option value="Ethereum" selected>Ethereum</option>
-                        <option value="Litecoin">Litecoin</option>
-                        <option value="Bitcoin Cash">Bitcoin Cash</option>
-                        <option value="Ripple">Ripple</option>
-                        {% elif crypto_one == 'Litecoin' %}
-                        <option value="Bitcoin">Bitcoin</option>
-                        <option value="Ethereum">Ethereum</option>
-                        <option value="Litecoin" selected>Litecoin</option>
-                        <option value="Bitcoin Cash">Bitcoin Cash</option>
-                        <option value="Ripple">Ripple</option>
-                        {% elif crypto_one == 'Bitcoin Cash' %}
-                        <option value="Bitcoin">Bitcoin</option>
-                        <option value="Ethereum">Ethereum</option>
-                        <option value="Litecoin">Litecoin</option>
-                        <option value="Bitcoin Cash" selected>Bitcoin Cash</option>
-                        <option value="Ripple">Ripple</option>
-                        {% elif crypto_one == 'Ripple' %}
-                        <option value="Bitcoin">Bitcoin</option>
-                        <option value="Ethereum">Ethereum</option>
-                        <option value="Litecoin">Litecoin</option>
-                        <option value="Bitcoin Cash">Bitcoin Cash</option>
-                        <option value="Ripple" selected>Ripple</option>
-                        {% endif %}
-                    </select>
+                <!--<select id="crypto_one" name="crypto_one" required>
+                    <option value="" disabled selected>Select currency 1</option>
+                    <option value="Bitcoin">Bitcoin</option>
+                    <option value="Ethereum">Ethereum</option>
+                    <option value="Litecoin">Litecoin</option>
+                    <option value="Bitcoin Cash">Bitcoin Cash</option>
+                    <option value="Ripple">Ripple</option>
+                </select>
 
-                    <select id="crypto_two" name="crypto_two" required>
+                <select id="crypto_two" name="crypto_two" required>
                     <option value="" disabled selected>Select currency 2</option>
-                        {% if crypto_two == 'Bitcoin' %}
-                        <option value="Bitcoin" selected>Bitcoin</option>
-                        <option value="Ethereum">Ethereum</option>
-                        <option value="Litecoin">Litecoin</option>
-                        <option value="Bitcoin Cash">Bitcoin Cash</option>
-                        <option value="Ripple">Ripple</option>
-                        {% elif crypto_two == 'Ethereum' %}
-                        <option value="Bitcoin">Bitcoin</option>
-                        <option value="Ethereum" selected>Ethereum</option>
-                        <option value="Litecoin">Litecoin</option>
-                        <option value="Bitcoin Cash">Bitcoin Cash</option>
-                        <option value="Ripple">Ripple</option>
-                        {% elif crypto_two == 'Litecoin' %}
-                        <option value="Bitcoin">Bitcoin</option>
-                        <option value="Ethereum">Ethereum</option>
-                        <option value="Litecoin" selected>Litecoin</option>
-                        <option value="Bitcoin Cash">Bitcoin Cash</option>
-                        <option value="Ripple">Ripple</option>
-                        {% elif crypto_two == 'Bitcoin Cash' %}
-                        <option value="Bitcoin">Bitcoin</option>
-                        <option value="Ethereum">Ethereum</option>
-                        <option value="Litecoin">Litecoin</option>
-                        <option value="Bitcoin Cash" selected>Bitcoin Cash</option>
-                        <option value="Ripple">Ripple</option>
-                        {% elif crypto_two == 'Ripple' %}
-                        <option value="Bitcoin">Bitcoin</option>
-                        <option value="Ethereum">Ethereum</option>
-                        <option value="Litecoin">Litecoin</option>
-                        <option value="Bitcoin Cash">Bitcoin Cash</option>
-                        <option value="Ripple" selected>Ripple</option>
-                        {% endif %}
+                    <option value="Bitcoin">Bitcoin</option>
+                    <option value="Ethereum">Ethereum</option>
+                    <option value="Litecoin">Litecoin</option>
+                    <option value="Bitcoin Cash">Bitcoin Cash</option>
+                    <option value="Ripple">Ripple</option>
                 </select>
 
                 <select id="function" name="function" required>
-                    <option value="" disabled>Select function</option>
-                    <option value="Analyze" selected>Analyze</option>
+                    <option value="" disabled selected>Select function</option>
+                    <option value="Analyze">Analyze</option>
                     <option value="Backtest">Backtest</option>
                     <option value="Graph">Graph</option>
-                </select>
+                </select>-->
+                <p>
+                    {{ form.coin1 }}
+                </p>
+
+                <p>
+                    {{ form.coin2 }}
+                </p>
+
+                <p>
+                    {{ form.function }}
+                </p>
             </div>
 
             <div class="custom-grid-2">
+                <!--
                 <label for="start_date">Start Period:</label>
                 <input type="date" id="start_date" name="start_date"
                    value="2020-06-06"
@@ -112,6 +74,16 @@
                 <input type="date" id="end_date" name="end_date"
                     value="{{now}}"
                     min="2018-01-02" max="{{now}}">
+                -->
+                <p>
+                    {{ form.date1.label }}
+                    {{ form.date1 }}
+                </p>
+
+                <p>
+                    {{ form.date2.label }}
+                    {{ form.date2 }}
+                </p>
 
                 <button>Submit</button>
 
@@ -120,7 +92,7 @@
     </form>
 
     <div class="grid">
-        <div class="box">
+        <div class="longbox">
             <h2>Pair Analysis</h2>
             <p>Correlation: {{ correlation }}</p>
             <p>Cointegration: {{ cointegration }}</p>
@@ -141,8 +113,8 @@
                     <tr>
                         <th>Coin1</th>
                         <th>Coin2</th>
-                        <th>Correlation</th>
-                        <th>Cointegration P-Value</th>
+                        <th onclick="sortTable();">Correlation</th>
+                        <th onclick="sortTable();">Cointegration P-Value</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -156,6 +128,33 @@
                     {% endfor %}
                 </tbody>
             </table>
+            <script>
+                function sortTable() {
+                    var table, rows, switching, i, x, y, shouldSwitch;
+                    table = document.getElementById("data");
+                    switching = true;
+
+                    while (switching) {
+                        switching = false;
+                        rows = table.rows;
+                        for (i = 1; i < (rows.length - 1); i++) {
+                            shouldSwitch = false;
+                            x = rows[i].getElementsByTagName("TD")[0];
+                            y = rows[i + 1].getElementsByTagName("TD")[0];
+                            console.log(x);
+                            console.log(y);
+                            if (Number(x.innerHTML) > Number(y.innerHTML)) {
+                                shouldSwitch = true;
+                                break;
+                            }
+                        }
+                        if (shouldSwitch) {
+                            rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                            switching = true;
+                        }
+                    }
+                }
+            </script>
         </div>
     </div>
 

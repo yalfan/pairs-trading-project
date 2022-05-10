@@ -13,11 +13,12 @@
     <h1>Pairs Trading Program</h1>
 
     <div class="home">
-        <form action="{{ url_for('handle_data') }}" method="POST">
+        <form action='/' method="POST">
+            {{ form.csrf_token }}
             <div class="navigation-container">
 
                 <div class="custom-grid">
-                    <select id="crypto_one" name="crypto_one" required>
+                    <!--<select id="crypto_one" name="crypto_one" required>
                         <option value="" disabled selected>Select currency 1</option>
                         <option value="Bitcoin">Bitcoin</option>
                         <option value="Ethereum">Ethereum</option>
@@ -40,10 +41,22 @@
                         <option value="Analyze">Analyze</option>
                         <option value="Backtest">Backtest</option>
                         <option value="Graph">Graph</option>
-                    </select>
+                    </select>-->
+                    <p>
+                        {{ form.coin1 }}
+                    </p>
+
+                    <p>
+                        {{ form.coin2 }}
+                    </p>
+
+                    <p>
+                        {{ form.function }}
+                    </p>
                 </div>
 
                 <div class="custom-grid-2">
+                    <!--
                     <label for="start_date">Start Period:</label>
                     <input type="date" id="start_date" name="start_date"
                        value="2020-06-06"
@@ -53,6 +66,16 @@
                     <input type="date" id="end_date" name="end_date"
                         value="{{now}}"
                         min="2018-01-02" max="{{now}}">
+                    -->
+                    <p>
+                        {{ form.date1.label }}
+                        {{ form.date1 }}
+                    </p>
+
+                    <p>
+                        {{ form.date2.label }}
+                        {{ form.date2 }}
+                    </p>
 
                     <button>Submit</button>
 

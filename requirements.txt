@@ -7,3 +7,4 @@ statsmodels
 gunicorn
 pymongo[srv]
 yahoofinancials
+Flask-WTF

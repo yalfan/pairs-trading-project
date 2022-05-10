@@ -139,6 +139,7 @@ def check_dates(coin_string):
     today = (datetime.datetime.today() - datetime.timedelta(days=1)).strftime('%Y-%m-%d')
     coin = coins[coin_string]
     last_date = coin.find().limit(1).sort([('$natural', -1)])[0]['Date'].date()
+    # print(datetime.datetime.today(), last_date, today)
     first_date = coin.find()[0]['Date'].date()
     # print(last_date)
     # print(first_date)

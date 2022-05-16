@@ -173,8 +173,8 @@ def upload_coin():
     new_crypto = request.form['new_crypto_name']
     filename = secure_filename(crypto_csv_file.filename)
     filename_path = 'instance/uploadeddata/%s.csv' % new_crypto
-    # crypto_csv_file.save(os.path.join(app.instance_path, 'uploadeddata', filename))
-    # importCoin(filename_path, new_crypto)
+    crypto_csv_file.save(os.path.join(app.instance_path, 'uploadeddata', filename))
+    importCoin(filename_path, new_crypto)
     print(crypto_csv_file)
     print(type(crypto_csv_file))
     return 'FILE UPLOADED TO DATABASE'

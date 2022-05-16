@@ -24,74 +24,98 @@
         <div class="navigation-container">
 
             <div class="custom-grid">
-                                    <select id="crypto_one" name="crypto_one" required>
-                        <option value="" disabled>Select currency 1</option>
-                        {% if crypto_one == 'Bitcoin' %}
-                        <option value="Bitcoin" selected>Bitcoin</option>
-                        <option value="Ethereum">Ethereum</option>
-                        <option value="Litecoin">Litecoin</option>
-                        <option value="Bitcoin Cash">Bitcoin Cash</option>
-                        <option value="Ripple">Ripple</option>
-                        {% elif crypto_one == 'Ethereum' %}
-                        <option value="Bitcoin">Bitcoin</option>
-                        <option value="Ethereum" selected>Ethereum</option>
-                        <option value="Litecoin">Litecoin</option>
-                        <option value="Bitcoin Cash">Bitcoin Cash</option>
-                        <option value="Ripple">Ripple</option>
-                        {% elif crypto_one == 'Litecoin' %}
-                        <option value="Bitcoin">Bitcoin</option>
-                        <option value="Ethereum">Ethereum</option>
-                        <option value="Litecoin" selected>Litecoin</option>
-                        <option value="Bitcoin Cash">Bitcoin Cash</option>
-                        <option value="Ripple">Ripple</option>
-                        {% elif crypto_one == 'Bitcoin Cash' %}
-                        <option value="Bitcoin">Bitcoin</option>
-                        <option value="Ethereum">Ethereum</option>
-                        <option value="Litecoin">Litecoin</option>
-                        <option value="Bitcoin Cash" selected>Bitcoin Cash</option>
-                        <option value="Ripple">Ripple</option>
-                        {% elif crypto_one == 'Ripple' %}
-                        <option value="Bitcoin">Bitcoin</option>
-                        <option value="Ethereum">Ethereum</option>
-                        <option value="Litecoin">Litecoin</option>
-                        <option value="Bitcoin Cash">Bitcoin Cash</option>
-                        <option value="Ripple" selected>Ripple</option>
-                        {% endif %}
-                    </select>
+                <!--
+                <select id="crypto_one" name="crypto_one" required>
+                    <option value="" disabled>Select currency 1</option>
+                    {% if crypto_one == 'btc' %}
+                    <option value="btc" selected>Bitcoin</option>
+                    <option value="eth">Ethereum</option>
+                    <option value="ltc">Litecoin</option>
+                    <option value="bch">Bitcoin Cash</option>
+                    <option value="xrp">Ripple</option>
+                    {% elif crypto_one == 'eth' %}
+                    <option value="btc">Bitcoin</option>
+                    <option value="eth" selected>Ethereum</option>
+                    <option value="ltc">Litecoin</option>
+                    <option value="bch">Bitcoin Cash</option>
+                    <option value="xrp">Ripple</option>
+                    {% elif crypto_one == 'ltc' %}
+                    <option value="btc">Bitcoin</option>
+                    <option value="eth">Ethereum</option>
+                    <option value="ltc" selected>Litecoin</option>
+                    <option value="bch">Bitcoin Cash</option>
+                    <option value="xrp">Ripple</option>
+                    {% elif crypto_one == 'bch' %}
+                    <option value="btc">Bitcoin</option>
+                    <option value="eth">Ethereum</option>
+                    <option value="ltc">Litecoin</option>
+                    <option value="bch" selected>Bitcoin Cash</option>
+                    <option value="xrp">Ripple</option>
+                    {% elif crypto_one == 'xrp' %}
+                    <option value="btc">Bitcoin</option>
+                    <option value="eth">Ethereum</option>
+                    <option value="ltc" >Litecoin</option>
+                    <option value="bch">Bitcoin Cash</option>
+                    <option value="xrp" selected>Ripple</option>
+                    {% endif %}
+                </select>
 
-                    <select id="crypto_two" name="crypto_two" required>
-                    <option value="" disabled selected>Select currency 2</option>
-                        {% if crypto_two == 'Bitcoin' %}
-                        <option value="Bitcoin" selected>Bitcoin</option>
-                        <option value="Ethereum">Ethereum</option>
-                        <option value="Litecoin">Litecoin</option>
-                        <option value="Bitcoin Cash">Bitcoin Cash</option>
-                        <option value="Ripple">Ripple</option>
-                        {% elif crypto_two == 'Ethereum' %}
-                        <option value="Bitcoin">Bitcoin</option>
-                        <option value="Ethereum" selected>Ethereum</option>
-                        <option value="Litecoin">Litecoin</option>
-                        <option value="Bitcoin Cash">Bitcoin Cash</option>
-                        <option value="Ripple">Ripple</option>
-                        {% elif crypto_two == 'Litecoin' %}
-                        <option value="Bitcoin">Bitcoin</option>
-                        <option value="Ethereum">Ethereum</option>
-                        <option value="Litecoin" selected>Litecoin</option>
-                        <option value="Bitcoin Cash">Bitcoin Cash</option>
-                        <option value="Ripple">Ripple</option>
-                        {% elif crypto_two == 'Bitcoin Cash' %}
-                        <option value="Bitcoin">Bitcoin</option>
-                        <option value="Ethereum">Ethereum</option>
-                        <option value="Litecoin">Litecoin</option>
-                        <option value="Bitcoin Cash" selected>Bitcoin Cash</option>
-                        <option value="Ripple">Ripple</option>
-                        {% elif crypto_two == 'Ripple' %}
-                        <option value="Bitcoin">Bitcoin</option>
-                        <option value="Ethereum">Ethereum</option>
-                        <option value="Litecoin">Litecoin</option>
-                        <option value="Bitcoin Cash">Bitcoin Cash</option>
-                        <option value="Ripple" selected>Ripple</option>
+                <select id="crypto_two" name="crypto_two" required>
+                <option value="" disabled selected>Select currency 2</option>
+                    {% if crypto_two == 'btc' %}
+                    <option value="btc" selected>Bitcoin</option>
+                    <option value="eth">Ethereum</option>
+                    <option value="ltc">Litecoin</option>
+                    <option value="bch">Bitcoin Cash</option>
+                    <option value="xrp">Ripple</option>
+                    {% elif crypto_two == 'eth' %}
+                    <option value="btc">Bitcoin</option>
+                    <option value="eth" selected>Ethereum</option>
+                    <option value="ltc">Litecoin</option>
+                    <option value="bch">Bitcoin Cash</option>
+                    <option value="xrp">Ripple</option>
+                    {% elif crypto_two == 'ltc' %}
+                    <option value="btc">Bitcoin</option>
+                    <option value="eth">Ethereum</option>
+                    <option value="ltc" selected>Litecoin</option>
+                    <option value="bch">Bitcoin Cash</option>
+                    <option value="xrp">Ripple</option>
+                    {% elif crypto_two == 'bch' %}
+                    <option value="btc">Bitcoin</option>
+                    <option value="eth">Ethereum</option>
+                    <option value="ltc">Litecoin</option>
+                    <option value="bch" selected>Bitcoin Cash</option>
+                    <option value="xrp">Ripple</option>
+                    {% elif crypto_two == 'xrp' %}
+                    <option value="btc">Bitcoin</option>
+                    <option value="eth">Ethereum</option>
+                    <option value="ltc" >Litecoin</option>
+                    <option value="bch">Bitcoin Cash</option>
+                    <option value="xrp" selected>Ripple</option>
+                    {% endif %}
+                </select>
+                -->
+
+                <select id="crypto_one" name="crypto_one" required>
+                    <option value="" disabled selected>Select currency 1</option>
+                    {% for coin in coins %}
+                        {% if crypto_one == coin %}
+                            <option value="{{coin}}" selected>{{coin.upper()}}</option>
+                        {% else %}
+                            <option value="{{coin}}">{{coin.upper()}}</option>
                         {% endif %}
+                    {% endfor %}
+                </select>
+
+                <select id="crypto_two" name="crypto_two" required>
+                    <option value="" disabled selected>Select currency 2</option>
+                    {% for coin in coins %}
+                        {% if crypto_two == coin %}
+                            <option value="{{coin}}" selected>{{coin.upper()}}</option>
+                        {% else %}
+                            <option value="{{coin}}">{{coin.upper()}}</option>
+                        {% endif %}
+                    {% endfor %}
                 </select>
 
                 <select id="function" name="function" required>

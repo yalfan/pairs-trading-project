@@ -7,19 +7,20 @@ from query_data import *
 from custom_backtest import *
 from importcoin import *
 
+client = MongoClient("mongodb+srv://yalfan22:yale2004@cluster0.qszrw.mongodb.net/test", connect=False)
+db = client.pairs_trading
+
 app = Flask(__name__)
-
-
-colors = [
-    "#F7464A", "#46BFBD", "#FDB45C", "#FEDCBA",
-    "#ABCDEF", "#DDDDDD", "#ABCABC", "#4169E1",
-    "#C71585", "#FF4500", "#FEDCBA", "#46BFBD"]
 
 now = (datetime.datetime.today() - datetime.timedelta(days=1)).date()
 
+
 @app.route('/')
 def home():
-    return render_template('home.html', now=now)
+    coins = db.list_collection_names()
+
+    return render_template('home.html', now=now, coins=coins)
+
 
 @app.route('/login')
 def login():
@@ -43,10 +44,12 @@ def results(crypto_one, crypto_two, function, start_date, end_date):
 
 @app.route('/backtest', methods=['GET', 'POST'])
 def backtest():
+    coins = db.list_collection_names()
     crypto_one = request.args['crypto_one']
     crypto_two = request.args['crypto_two']
     start_date = request.args['start_date']
     end_date = request.args['end_date']
+    start_date, end_date = check_dates(crypto_one, crypto_two, start_date, end_date)
     bt_params = 15, 15, 0, 2, 1, 0
     try:
         ma_period = int(request.args['ma_period'])
@@ -78,7 +81,7 @@ def backtest():
     equity = get_equity_curve(bt)
     values = get_values(start_date, end_date, 200000, final_df, equity)
 
-    return render_template('backtest.html', title=title, crypto_one=crypto_one, crypto_two=crypto_two,
+    return render_template('backtest.html', coins=coins, title=title, crypto_one=crypto_one, crypto_two=crypto_two,
                            function="Backtest", labels=get_dates_string_daily(dates), equity=equity, values=values,
                            start_date=start_date, end_date=end_date, values1=avg1, values2=avg2,
                            tables=[final_df.to_html(classes='bt_table', header="true", col_space=100)],
@@ -87,10 +90,12 @@ def backtest():
 
 @app.route('/analyze', methods=['GET', 'POST'])
 def analyze():
+    coins = db.list_collection_names()
     crypto_one = request.args['crypto_one']
     crypto_two = request.args['crypto_two']
     start_date = request.args['start_date']
     end_date = request.args['end_date']
+    start_date, end_date = check_dates(crypto_one, crypto_two, start_date, end_date)
 
     title = crypto_one + "-" + crypto_two + " Analyze Results"
 
@@ -102,7 +107,7 @@ def analyze():
     final_df = find_best_pairs(start_date, end_date)
 
     dates = get_dates(start_date, end_date)
-    return render_template('analyze.html', title=title, crypto_one=crypto_one, crypto_two=crypto_two, function="Analyze",
+    return render_template('analyze.html', coins=coins, title=title, crypto_one=crypto_one, crypto_two=crypto_two, function="Analyze",
                            labels=get_dates_string_daily(dates), values1=avg1, values2=avg2,
                            correlation=correlation, cointegration=cointegration,
                            tables=[final_df.to_html(classes='a_table', header="true", index=False,
@@ -112,10 +117,12 @@ def analyze():
 
 @app.route('/graph', methods=['GET', 'POST'])
 def graph():
+    coins = db.list_collection_names()
     crypto_one = request.args['crypto_one']
     crypto_two = request.args['crypto_two']
     start_date = request.args['start_date']
     end_date = request.args['end_date']
+    start_date, end_date = check_dates(crypto_one, crypto_two, start_date, end_date)
 
     title = crypto_one + "-" + crypto_two + " Graph Results"
 
@@ -123,7 +130,7 @@ def graph():
     avg1 = get_data(start_date, end_date, crypto_one)[4]
     avg2 = get_data(start_date, end_date, crypto_two)[4]
 
-    return render_template('graph.html', title=title, crypto_one=crypto_one, crypto_two=crypto_two, function="Graph",
+    return render_template('graph.html', coins=coins, title=title, crypto_one=crypto_one, crypto_two=crypto_two, function="Graph",
                            labels=get_dates_string_daily(dates), values1=avg1, values2=avg2,
                            now=now, start_date=start_date, end_date=end_date)
 

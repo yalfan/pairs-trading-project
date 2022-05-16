@@ -1,7 +1,3 @@
-import pandas as pd
-from pymongo import MongoClient
-import numpy as np
-import datetime
 from upload_data import *
 
 # d1 = "2021-10-10"
@@ -9,17 +5,18 @@ from upload_data import *
 client = MongoClient("mongodb+srv://yalfan22:yale2004@cluster0.qszrw.mongodb.net/test", connect=False)
 db = client.pairs_trading
 
-btc = db.btc
-eth = db.eth
-ltc = db.ltc
-bch = db.bch
-xrp = db.xrp
+collections = []
+for i in db.list_collection_names():
+    collections.append(db[i])
+
+coins = {db.list_collection_names()[i]: collections[i] for i in range(len(db.list_collection_names()))}
+
+# print(coins)
 
 
 def find_best_pairs(date1, date2):
     from values import find_correlation, find_cointegration
-    coin_symbols = ["Bitcoin", "Ethereum", "Litecoin", "Ripple", "Bitcoin Cash"]
-    index = []
+    coin_symbols = ["btc", "eth", "ltc", "xrp", "bch"]
     values_to_return = []
     for i in range(len(coin_symbols)-1):
         for j in range(i+1, len(coin_symbols)):
@@ -29,7 +26,7 @@ def find_best_pairs(date1, date2):
             # print("prices 2 %s %s" % (len(prices2), coin_symbols[j]))
             values_to_return.append([coin_symbols[i], coin_symbols[j],
                                      find_correlation(prices1, prices2),
-                                     round(find_cointegration(prices1, prices2)[1], 6)])
+                                     find_cointegration(prices1, prices2)[1]])
     df = pd.DataFrame(values_to_return, columns=['Coin1', 'Coin2', 'Correlation', 'Cointegration P-Value'])
 
     return df
@@ -60,16 +57,8 @@ def get_dates_string_daily(dates):
     return string_dates
 
 
-def get_data(date1, date2, coin_string):
-    coin_symbols = {
-        "Bitcoin": "BTC-USD",
-        "Ethereum": "ETH-USD",
-        "Litecoin": "LTC-USD",
-        "Ripple": "XRP-USD",
-        "Bitcoin Cash": "BCH-USD"
-    }
-    coin = string_to_coin(coin_string)
-    check_dates(coin_symbols[coin_string])
+def get_data(date1, date2, coin_str):
+    coin = coins[coin_str]
     average_prices, opens, highs, lows, closes, volumes, open_interest = [], [], [], [], [], [], []
 
     # avg1, open1, high1, low1, close1, volume1
@@ -97,15 +86,15 @@ def get_data(date1, date2, coin_string):
     return average_prices, opens, highs, lows, closes, volumes, open_interest
 
 
-def get_data_dataframe(d1, d2, coin_string):
+def get_data_dataframe(d1, d2, coin_str):
     # d1, d2 = date1/2
     # get dates
     dates = np.array(get_dates(d1, d2))
     # dates = np.flip(dates)
 
     # get values
-    avg1, open1, high1, low1, close1, volume1, open_interest = np.array(get_data(d1, d2, coin_string))
-    vals = np.array(get_data(d1, d2, coin_string))
+    avg1, open1, high1, low1, close1, volume1, open_interest = np.array(get_data(d1, d2, coin_str))
+    vals = np.array(get_data(d1, d2, coin_str))
 
     # make array
     # arr = np.array([dates, open1, high1, low1, close1, volume1, open_interest], dtype=object)
@@ -117,32 +106,36 @@ def get_data_dataframe(d1, d2, coin_string):
     return df
 
 
-def string_to_coin(coin_string):
-    coin = {
-        "Bitcoin": btc,
-        "Ethereum": eth,
-        "Litecoin": ltc,
-        "Bitcoin Cash": bch,
-        "Ripple": xrp
-    }[coin_string]
-    return coin
-
-
-def check_dates(coin_string):
-    coins = {
-        "BTC-USD": btc,
-        "ETH-USD": eth,
-        "LTC-USD": ltc,
-        "XRP-USD": xrp,
-        "BCH-USD": bch
-    }
-    today = (datetime.datetime.today() - datetime.timedelta(days=1)).strftime('%Y-%m-%d')
-    coin = coins[coin_string]
+def auto_update_csv(coin_str):
+    coin = coins[coin_str]
+    yesterday = (datetime.datetime.today() - datetime.timedelta(days=1)).strftime('%Y-%m-%d')
     last_date = coin.find().limit(1).sort([('$natural', -1)])[0]['Date'].date()
     first_date = coin.find()[0]['Date'].date()
     # print(last_date)
     # print(first_date)
-    if last_date.strftime('%Y-%m-%d') != today and first_date.strftime("%Y-%m-%d") != today:
-        print("updated %s date!" % coin_string)
-        update_csv_db(coin_string, last_date, coin)
+    if last_date.strftime('%Y-%m-%d') != yesterday and first_date.strftime("%Y-%m-%d") != yesterday:
+        if coin_str in ['btc', 'eth', 'bch', 'xrp', 'ltc']:
+            print("updated %s date!" % coin_str)
+            update_csv_db(coin_str, last_date)
 
+
+def check_dates(coin_str1, coin_str2, start_date, end_date):
+    end_date = datetime.datetime.strptime(end_date, "%Y-%m-%d").date()
+    start_date = datetime.datetime.strptime(start_date, "%Y-%m-%d").date()
+    auto_update_csv(coin_str1)
+    auto_update_csv(coin_str2)
+    coin1 = coins[coin_str1]
+    coin2 = coins[coin_str2]
+    last_date1 = coin1.find().limit(1).sort([('$natural', -1)])[0]['Date'].date()
+    last_date2 = coin2.find().limit(1).sort([('$natural', -1)])[0]['Date'].date()
+    first_date1 = coin1.find()[0]['Date'].date()
+    first_date2 = coin2.find()[0]['Date'].date()
+    if last_date1 < end_date:
+        end_date = last_date1
+    if last_date2 < end_date:
+        end_date = last_date2
+    if first_date1 > start_date:
+        start_date = first_date1
+    if first_date2 > start_date:
+        start_date = first_date2
+    return start_date.strftime('%Y-%m-%d'), end_date.strftime('%Y-%m-%d')

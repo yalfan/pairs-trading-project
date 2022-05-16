@@ -19,20 +19,30 @@
                 <div class="custom-grid">
                     <select id="crypto_one" name="crypto_one" required>
                         <option value="" disabled selected>Select currency 1</option>
-                        <option value="Bitcoin">Bitcoin</option>
-                        <option value="Ethereum">Ethereum</option>
-                        <option value="Litecoin">Litecoin</option>
-                        <option value="Bitcoin Cash">Bitcoin Cash</option>
-                        <option value="Ripple">Ripple</option>
+                        <!--
+                        <option value="btc">Bitcoin</option>
+                        <option value="eth">Ethereum</option>
+                        <option value="ltc">Litecoin</option>
+                        <option value="bch">Bitcoin Cash</option>
+                        <option value="xrp">Ripple</option>
+                        -->
+                        {% for coin in coins %}
+                            <option value="{{coin}}">{{coin.upper()}}</option>"
+                        {% endfor %}
                     </select>
 
                     <select id="crypto_two" name="crypto_two" required>
                         <option value="" disabled selected>Select currency 2</option>
-                        <option value="Bitcoin">Bitcoin</option>
-                        <option value="Ethereum">Ethereum</option>
-                        <option value="Litecoin">Litecoin</option>
-                        <option value="Bitcoin Cash">Bitcoin Cash</option>
-                        <option value="Ripple">Ripple</option>
+                        <!--
+                        <option value="btc">Bitcoin</option>
+                        <option value="eth">Ethereum</option>
+                        <option value="ltc">Litecoin</option>
+                        <option value="bch">Bitcoin Cash</option>
+                        <option value="xrp">Ripple</option>
+                        -->
+                        {% for coin in coins %}
+                            <option value="{{coin}}">{{coin.upper()}}</option>"
+                        {% endfor %}
                     </select>
 
                     <select id="function" name="function" required>

@@ -26,7 +26,6 @@ def textToCSV(text_file, collection_name):
     collection.insert_many(filecontent)
 
 
-
 def importCoin(csv_file, collection_name):
     """ Imports a csv file at path csv_name to a mongo colection
     returns: count of the documants in the new collection
@@ -37,7 +36,10 @@ def importCoin(csv_file, collection_name):
     rows = len(sheet.index)
     for i in range(rows):
         date = sheet.at[i, 'date']
-        d1 = datetime.datetime.strptime(date, "%Y-%m-%d")
+        try:
+            d1 = datetime.datetime.strptime(date, "%Y-%m-%d")
+        except:
+            d1 = datetime.datetime.strptime(date, "%m/%d/%Y")
         high = sheet.at[i, 'high']
         low = sheet.at[i, 'low']
         open = sheet.at[i, 'open']

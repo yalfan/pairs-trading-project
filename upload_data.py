@@ -5,7 +5,23 @@ import datetime
 from yahoofinancials import YahooFinancials
 
 
-def update_csv_db(symbol, lastdate, coin):
+client = MongoClient("mongodb+srv://yalfan22:yale2004@cluster0.qszrw.mongodb.net/test", connect=False)
+
+db = client.pairs_trading
+
+collections = []
+symbols = []
+for i in db.list_collection_names():
+    symbols.append(i.upper() + "-USD")
+    collections.append(db[i])
+
+coins = {symbols[i]: collections[i] for i in range(len(symbols))}
+# symbols_dict = {symbols[i]: db.list_collection_names()[i] for i in range(len(symbols))}
+
+
+def update_csv_db(coin_string, lastdate):
+    coin = coins[coin_string]
+
     yahoo_financials = YahooFinancials(symbol)
     today = (datetime.datetime.today() - datetime.timedelta(days=1)).strftime('%Y-%m-%d')
     lastdate = (lastdate + datetime.timedelta(days=1)).strftime('%Y-%m-%d')
@@ -58,25 +74,7 @@ def upload_csvs(sheet, coin):
 
 
 if __name__ == "__main__":
-    client = MongoClient("mongodb+srv://yalfan22:yale2004@cluster0.qszrw.mongodb.net/test", connect=False)
-
-    db = client.pairs_trading
-
-    btc = db.btc
-    eth = db.eth
-    ltc = db.ltc
-    bch = db.bch
-    xrp = db.xrp
-
-    coins = {
-        "BTC-USD": btc,
-        "ETH-USD": eth,
-        "LTC-USD": ltc,
-        "XRP-USD": xrp,
-        "BCH-USD": bch
-    }
     # we set which pair we want to retrieve data for
-    symbols = ["BTC-USD", "ETH-USD", "LTC-USD", "XRP-USD", "BCH-USD"]
     today = (datetime.datetime.today() - datetime.timedelta(days=1)).strftime('%Y-%m-%d')
     for symbol in symbols:
         file_name = 'data/%s_dailydata.csv' % symbol
@@ -89,7 +87,7 @@ if __name__ == "__main__":
         if last_date != today:
             last_date = datetime.datetime.strptime(last_date, "%Y-%m-%d")
             # print("updated %s" % file_name)
-            # update_csv_db(symbol, last_date, coins[symbol])
+            # update_csv_db(symbol, last_date)
 
         upload_csvs(sheet, coins[symbol])
         print("uploaded %s" % symbol)

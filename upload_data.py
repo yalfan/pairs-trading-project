@@ -16,11 +16,12 @@ for i in db.list_collection_names():
     collections.append(db[i])
 
 coins = {symbols[i]: collections[i] for i in range(len(symbols))}
-# symbols_dict = {symbols[i]: db.list_collection_names()[i] for i in range(len(symbols))}
+symbols_dict = {db.list_collection_names()[i]: symbols[i] for i in range(len(symbols))}
 
 
 def update_csv_db(coin_string, lastdate):
-    coin = coins[coin_string]
+    symbol = symbols_dict[coin_string]
+    coin = coins[symbol]
 
     yahoo_financials = YahooFinancials(symbol)
     today = (datetime.datetime.today() - datetime.timedelta(days=1)).strftime('%Y-%m-%d')

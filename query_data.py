@@ -9,7 +9,6 @@ collections = []
 for i in db.list_collection_names():
     collections.append(db[i])
 
-coins = {db.list_collection_names()[i]: collections[i] for i in range(len(db.list_collection_names()))}
 
 # print(coins)
 
@@ -58,6 +57,7 @@ def get_dates_string_daily(dates):
 
 
 def get_data(date1, date2, coin_str):
+    coins = {db.list_collection_names()[i]: collections[i] for i in range(len(db.list_collection_names()))}
     coin = coins[coin_str]
     average_prices, opens, highs, lows, closes, volumes, open_interest = [], [], [], [], [], [], []
 
@@ -107,6 +107,7 @@ def get_data_dataframe(d1, d2, coin_str):
 
 
 def auto_update_csv(coin_str):
+    coins = {db.list_collection_names()[i]: collections[i] for i in range(len(db.list_collection_names()))}
     coin = coins[coin_str]
     yesterday = (datetime.datetime.today() - datetime.timedelta(days=1)).strftime('%Y-%m-%d')
     last_date = coin.find().limit(1).sort([('$natural', -1)])[0]['Date'].date()
@@ -122,6 +123,7 @@ def auto_update_csv(coin_str):
 
 
 def check_dates(coin_str1, coin_str2, start_date, end_date):
+    coins = {db.list_collection_names()[i]: collections[i] for i in range(len(db.list_collection_names()))}
     end_date = datetime.datetime.strptime(end_date, "%Y-%m-%d").date()
     start_date = datetime.datetime.strptime(start_date, "%Y-%m-%d").date()
     auto_update_csv(coin_str1)

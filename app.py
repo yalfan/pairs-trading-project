@@ -231,7 +231,7 @@ def upload_coin():
     import_coin(filename_path, new_crypto)
     print(crypto_csv_file)
     print(type(crypto_csv_file))
-    return redirect(url_for('success'))
+    return redirect(url_for('home'))
 
 
 @app.route('/success')

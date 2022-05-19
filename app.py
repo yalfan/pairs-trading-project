@@ -7,6 +7,8 @@ from query_data import *
 from custom_backtest import *
 from importcoin import *
 
+import time
+
 now = (datetime.datetime.today() - datetime.timedelta(days=1)).date()
 
 import json
@@ -229,7 +231,13 @@ def upload_coin():
     import_coin(filename_path, new_crypto)
     print(crypto_csv_file)
     print(type(crypto_csv_file))
-    return 'FILE UPLOADED TO DATABASE'
+    return redirect(url_for('success'))
+
+
+@app.route('/success')
+def success():
+    time.sleep(1.5)
+    return redirect(url_for('home'))
 
 
 @app.route('/handle_backtest_data', methods=['POST'])

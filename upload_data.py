@@ -25,7 +25,9 @@ def update_csv_db(symbol, lastdate):
     yahoo_financials = YahooFinancials(symbol)
     today = (datetime.datetime.today() - datetime.timedelta(days=1)).strftime('%Y-%m-%d')
     lastdate = (lastdate + datetime.timedelta(days=1)).strftime('%Y-%m-%d')
-    data = yahoo_financials.get_historical_price_data(lastdate, today, "daily")
+
+    data = yahoo_financials.get_historical_price_data("2022-05-17", today, "daily")
+
     df = pd.DataFrame(data[symbol]['prices'])
     # df = df.drop('date', axis=1).set_index('formatted_date')
     # df.index.names = ['date']
@@ -73,6 +75,25 @@ def upload_csvs(sheet, coin):
     coin.insert_many(data)
 
 
+def update_all():
+    today = (datetime.datetime.today() - datetime.timedelta(days=1)).strftime('%Y-%m-%d')
+    for symbol in symbols:
+        if symbol not in ['BTC-USD', 'ETH-USD', 'BCH-USD', 'XRP-USD', 'LTC-USD']:
+            continue
+        file_name = 'data/%s_dailydata.csv' % symbol
+        sheet = pd.read_csv(file_name)
+        with open(file_name, "r") as f1:
+            last_date = ""
+            last_line = f1.readlines()[-1]
+            for i in range(-11, -1, 1):
+                last_date += last_line[i]
+        if last_date != today:
+            print(last_date, today)
+            last_date = datetime.datetime.strptime(last_date, "%Y-%m-%d")
+            update_csv_db(symbol, last_date)
+            print("updated %s" % file_name)
+
+
 if __name__ == "__main__":
     # we set which pair we want to retrieve data for
     today = (datetime.datetime.today() - datetime.timedelta(days=1)).strftime('%Y-%m-%d')
@@ -87,9 +108,10 @@ if __name__ == "__main__":
             for i in range(-11, -1, 1):
                 last_date += last_line[i]
         if last_date != today:
+            print(last_date, today)
             last_date = datetime.datetime.strptime(last_date, "%Y-%m-%d")
-            # print("updated %s" % file_name)
             # update_csv_db(symbol, last_date)
+            # print("updated %s" % file_name)
 
-        # upload_csvs(sheet, coins[symbol])
-        # print("uploaded %s" % symbol)
+        upload_csvs(sheet, coins[symbol])
+        print("uploaded %s" % symbol)

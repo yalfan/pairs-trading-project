@@ -22,8 +22,8 @@ def find_best_pairs(date1, date2):
         for j in range(i+1, len(coin_symbols)):
             prices1 = np.array(get_data(date1, date2, coin_symbols[i])[0])
             prices2 = np.array(get_data(date1, date2, coin_symbols[j])[0])
-            # print("prices 1 %s %s" % (len(prices1), coin_symbols[i]))
-            # print("prices 2 %s %s" % (len(prices2), coin_symbols[j]))
+            print("prices 1 %s %s" % (len(prices1), coin_symbols[i]))
+            print("prices 2 %s %s" % (len(prices2), coin_symbols[j]))
             values_to_return.append([coin_symbols[i], coin_symbols[j],
                                      find_correlation(prices1, prices2),
                                      find_cointegration(prices1, prices2)])

@@ -1,18 +1,71 @@
 import os
-from flask import Flask, render_template, request, redirect, url_for
 from werkzeug.utils import secure_filename
+from flask import *
 
 from values import *
 from query_data import *
 from custom_backtest import *
 from importcoin import *
 
-client = MongoClient("mongodb+srv://yalfan22:yale2004@cluster0.qszrw.mongodb.net/test", connect=False)
-db = client.pairs_trading
+now = (datetime.datetime.today() - datetime.timedelta(days=1)).date()
+
+import json
+from os import environ as env
+from urllib.parse import quote_plus, urlencode
+
+from authlib.integrations.flask_client import OAuth
+from dotenv import find_dotenv, load_dotenv
+
+ENV_FILE = find_dotenv()
+if ENV_FILE:
+    load_dotenv(ENV_FILE)
 
 app = Flask(__name__)
+app.secret_key = env.get("APP_SECRET_KEY")
 
-now = (datetime.datetime.today() - datetime.timedelta(days=1)).date()
+
+oauth = OAuth(app)
+
+oauth.register(
+    "auth0",
+    client_id=env.get("AUTH0_CLIENT_ID"),
+    client_secret=env.get("AUTH0_CLIENT_SECRET"),
+    client_kwargs={
+        "scope": "openid profile email",
+    },
+    server_metadata_url=f'https://{env.get("AUTH0_DOMAIN")}/.well-known/openid-configuration',
+)
+
+
+@app.route("/callback", methods=["GET", "POST"])
+def callback():
+    token = oauth.auth0.authorize_access_token()
+    session["user"] = token
+    return redirect("/")
+
+
+@app.route("/login")
+def login():
+    return oauth.auth0.authorize_redirect(
+        redirect_uri=url_for("callback", _external=True)
+    )
+
+
+@app.route("/logout")
+def logout():
+    session.clear()
+    return redirect(
+        "https://"
+        + env.get("AUTH0_DOMAIN")
+        + "/v2/logout?"
+        + urlencode(
+            {
+                "returnTo": url_for("home", _external=True),
+                "client_id": env.get("AUTH0_CLIENT_ID"),
+            },
+            quote_via=quote_plus,
+        )
+    )
 
 
 @app.route('/')
@@ -20,11 +73,6 @@ def home():
     coins = db.list_collection_names()
 
     return render_template('home.html', now=now, coins=coins)
-
-
-@app.route('/login')
-def login():
-    return render_template('login.html')
 
 
 @app.route('/about/')
@@ -50,7 +98,7 @@ def backtest():
     start_date = request.args['start_date']
     end_date = request.args['end_date']
     start_date, end_date = check_dates(crypto_one, crypto_two, start_date, end_date)
-    bt_params = 15, 15, 0, 2, 1, 0
+    bt_params = 15, 15, 0, 2, 1, 0, 20000
     try:
         ma_period = int(request.args['ma_period'])
         std_period = int(request.args['std_period'])
@@ -58,11 +106,14 @@ def backtest():
         entry_threshold = float(request.args['entry_threshold'])
         exit_threshold = float(request.args['exit_threshold'])
         sl_threshold = float(request.args['sl_threshold'])
-        bt_params = ma_period, std_period, max_dur, entry_threshold, exit_threshold, sl_threshold
+        starting_equity = float(request.args['starting_equity'])
+        # bt_params = ma_period, std_period, max_dur, entry_threshold, exit_threshold, sl_threshold, starting_equity
     except KeyError:
+        print("it didn't work :(")
         pass
     else:
-        bt_params = ma_period, std_period, max_dur, entry_threshold, exit_threshold, sl_threshold
+        print("it worked!")
+        bt_params = ma_period, std_period, max_dur, entry_threshold, exit_threshold, sl_threshold, starting_equity
 
     avg1 = get_data(start_date, end_date, crypto_one)[0]
     avg2 = get_data(start_date, end_date, crypto_two)[0]
@@ -76,10 +127,10 @@ def backtest():
 
     df1.name = crypto_one
     df2.name = crypto_two
-    bt = custom_backtest(df1, df2, bt_params, 200000)
+    bt = custom_backtest(df1, df2, bt_params)
     final_df = get_trades_df(bt)
     equity = get_equity_curve(bt)
-    values = get_values(start_date, end_date, 200000, final_df, equity)
+    values = get_values(start_date, end_date, bt_params[6], final_df, equity)
 
     return render_template('backtest.html', coins=coins, title=title, crypto_one=crypto_one, crypto_two=crypto_two,
                            function="Backtest", labels=get_dates_string_daily(dates), equity=equity, values=values,
@@ -103,7 +154,7 @@ def analyze():
     avg2 = get_data(start_date, end_date, crypto_two)[0]
 
     correlation = find_correlation(avg1, avg2)
-    cointegration = find_cointegration(avg1, avg2)[1]
+    cointegration = find_cointegration(avg1, avg2)
     final_df = find_best_pairs(start_date, end_date)
 
     dates = get_dates(start_date, end_date)
@@ -174,7 +225,7 @@ def upload_coin():
     filename = secure_filename(crypto_csv_file.filename)
     filename_path = 'instance/uploadeddata/%s.csv' % new_crypto
     crypto_csv_file.save(os.path.join(app.instance_path, 'uploadeddata', filename))
-    importCoin(filename_path, new_crypto)
+    import_coin(filename_path, new_crypto)
     print(crypto_csv_file)
     print(type(crypto_csv_file))
     return 'FILE UPLOADED TO DATABASE'
@@ -199,10 +250,11 @@ def handle_backtest_data():
         entry_threshold = request.form['entry_threshold']
         exit_threshold = request.form['exit_threshold']
         sl_threshold = request.form['sl_threshold']
+        starting_equity = request.form['starting_equity']
         return redirect(url_for('backtest', crypto_one=crypto_one, crypto_two=crypto_two,
                                 start_date=start_date, end_date=end_date, ma_period=ma_period, std_period=std_period,
                                 max_dur=max_dur, entry_threshold=entry_threshold, exit_threshold=exit_threshold,
-                                sl_threshold=sl_threshold
+                                sl_threshold=sl_threshold, starting_equity=starting_equity
                                 ))
 
     else:

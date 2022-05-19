@@ -20,7 +20,7 @@ def Z_SCORE(arr: pd.Series):
 
 
 class PairRatio:
-    def __init__(self, ratio, sma, std_dev, z_score, df1, df2, equity, params):
+    def __init__(self, ratio, sma, std_dev, z_score, df1, df2, params):
         ma_period, std_period, max_dur, entry_threshold, exit_threshold, sl_threshold = \
             params[0], params[1], params[2], params[3], params[4], params[5]
 
@@ -47,7 +47,7 @@ class PairRatio:
         self.coin2 = df2.name
         self.df1 = df1
         self.df2 = df2
-        self.equity = equity
+        self.equity = params[6]
         self.i = 0
         self.portfolio = 0
         self.portfolio_values = []
@@ -307,14 +307,14 @@ class ClosePosition:
             self.type = "Close"
 
 
-def custom_backtest(df1, df2, params, equity):
+def custom_backtest(df1, df2, params):
     ma_period, std_period, max_dur, entry_threshold, exit_threshold, sl_threshold = \
         params[0], params[1], params[2], params[3], params[4], params[5]
     ratio = (df1['Close'] / df2['Close']).rename("Ratio")
     sma = SMA(ratio, ma_period).rename("SMA")
     std_dev = STD_DEV(ratio, std_period).rename("STD")
     z_score = pd.Series((ratio - sma) / std_dev).rename("Z_SCORE")
-    bt = PairRatio(ratio, sma, std_dev, z_score, df1, df2, equity, params)
+    bt = PairRatio(ratio, sma, std_dev, z_score, df1, df2, params)
     bt.run()
     return bt
 

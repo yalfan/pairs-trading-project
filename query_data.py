@@ -26,7 +26,7 @@ def find_best_pairs(date1, date2):
             # print("prices 2 %s %s" % (len(prices2), coin_symbols[j]))
             values_to_return.append([coin_symbols[i], coin_symbols[j],
                                      find_correlation(prices1, prices2),
-                                     find_cointegration(prices1, prices2)[1]])
+                                     find_cointegration(prices1, prices2)])
     df = pd.DataFrame(values_to_return, columns=['Coin1', 'Coin2', 'Correlation', 'Cointegration P-Value'])
 
     return df
@@ -111,12 +111,14 @@ def auto_update_csv(coin_str):
     yesterday = (datetime.datetime.today() - datetime.timedelta(days=1)).strftime('%Y-%m-%d')
     last_date = coin.find().limit(1).sort([('$natural', -1)])[0]['Date'].date()
     first_date = coin.find()[0]['Date'].date()
-    # print(last_date)
-    # print(first_date)
+    print(last_date)
+    print(first_date)
+    print(coin_str)
     if last_date.strftime('%Y-%m-%d') != yesterday and first_date.strftime("%Y-%m-%d") != yesterday:
         if coin_str in ['btc', 'eth', 'bch', 'xrp', 'ltc']:
             print("updated %s date!" % coin_str)
-            update_csv_db(coin_str, last_date)
+            coin_symbol = coin_str.upper() + "-USD"
+            update_csv_db(coin_symbol, last_date)
 
 
 def check_dates(coin_str1, coin_str2, start_date, end_date):

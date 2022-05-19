@@ -6,7 +6,8 @@ from upload_data import *
 client = MongoClient("mongodb+srv://erikim22:KIm3kEf1JKMOsbXx@cluster0.qszrw.mongodb.net/test", connect=False)
 db = client.pairs_trading
 
-def textToCSV(text_file, collection_name):
+
+def text_to_csv(text_file, collection_name):
     collection = db[collection_name]
     filecontent = []
     with open(text_file) as f:
@@ -26,7 +27,7 @@ def textToCSV(text_file, collection_name):
     collection.insert_many(filecontent)
 
 
-def importCoin(csv_file, collection_name):
+def import_coin(csv_file, collection_name):
     """ Imports a csv file at path csv_name to a mongo colection
     returns: count of the documants in the new collection
     """

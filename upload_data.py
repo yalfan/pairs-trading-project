@@ -16,11 +16,10 @@ for i in db.list_collection_names():
     collections.append(db[i])
 
 coins = {symbols[i]: collections[i] for i in range(len(symbols))}
-symbols_dict = {db.list_collection_names()[i]: symbols[i] for i in range(len(symbols))}
+symbols_dict = {symbols[i]: db.list_collection_names()[i] for i in range(len(symbols))}
 
 
-def update_csv_db(coin_string, lastdate):
-    symbol = symbols_dict[coin_string]
+def update_csv_db(symbol, lastdate):
     coin = coins[symbol]
 
     yahoo_financials = YahooFinancials(symbol)
@@ -78,6 +77,8 @@ if __name__ == "__main__":
     # we set which pair we want to retrieve data for
     today = (datetime.datetime.today() - datetime.timedelta(days=1)).strftime('%Y-%m-%d')
     for symbol in symbols:
+        if symbol not in ['BTC-USD', 'ETH-USD', 'BCH-USD', 'XRP-USD', 'LTC-USD']:
+            continue
         file_name = 'data/%s_dailydata.csv' % symbol
         sheet = pd.read_csv(file_name)
         with open(file_name, "r") as f1:
@@ -90,5 +91,5 @@ if __name__ == "__main__":
             # print("updated %s" % file_name)
             # update_csv_db(symbol, last_date)
 
-        upload_csvs(sheet, coins[symbol])
-        print("uploaded %s" % symbol)
+        # upload_csvs(sheet, coins[symbol])
+        # print("uploaded %s" % symbol)

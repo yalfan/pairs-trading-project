@@ -224,6 +224,13 @@ input[type="number"]
     grid-template-columns: 2fr 2fr 1fr;
 }
 
+.custom-grid-1 {
+    display: grid;
+    width: 80%;
+    gap: 10px;
+    grid-template-columns: 2fr 2fr 1fr 1fr;
+}
+
 .custom-grid-2 {
     display: grid;
     width: 60%;

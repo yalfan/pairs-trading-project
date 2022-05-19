@@ -75,7 +75,7 @@ def find_correlation(price1, price2):
 
 
 def find_cointegration(price1, price2):
-    return round(ts.coint(price1, price2), 5)
+    return round(ts.coint(price1, price2)[1], 5)
 
 
 """start_date = "2021-6-6"

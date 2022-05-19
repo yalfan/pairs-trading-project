@@ -165,8 +165,8 @@
                     <tr>
                         <th>Coin1</th>
                         <th>Coin2</th>
-                        <th>Correlation</th>
-                        <th>Cointegration P-Value</th>
+                        <th onclick="sortTable(2);">Correlation</th>
+                        <th onclick="sortTable(3);">Cointegration P-Value</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -180,6 +180,48 @@
                     {% endfor %}
                 </tbody>
             </table>
+            <script>
+                function sortTable(n) {
+                    var table, rows, switching, i, x, y, shouldSwitch, dir = "asc", switchCount = 0;
+                    table = document.getElementById("data");
+                    switching = true;
+
+                    while (switching) {
+                        switching = false;
+                        rows = table.rows;
+                        for (i = 1; i < (rows.length - 1); i++) {
+                            shouldSwitch = false;
+                            x = rows[i].getElementsByTagName("TD")[n];
+                            y = rows[i + 1].getElementsByTagName("TD")[n];
+                            console.log(x);
+                            console.log(y);
+                            if (dir == "asc") {
+                                if (Number(x.innerHTML) > Number(y.innerHTML)) {
+                                    shouldSwitch = true;
+                                    break;
+                                }
+                            }
+                            else if (dir == "desc") {
+                                if (Number(x.innerHTML) < Number(y.innerHTML)) {
+                                    shouldSwitch = true;
+                                    break;
+                                }
+                            }
+                        }
+                        if (shouldSwitch) {
+                            rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                            switching = true;
+                            switchCount++;
+                        }
+                        else {
+                            if (switchCount == 0 && dir == "asc") {
+                                dir = "desc";
+                                switching = true;
+                            }
+                        }
+                    }
+                }
+            </script>
         </div>
     </div>
 

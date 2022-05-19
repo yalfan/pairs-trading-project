@@ -9,24 +9,16 @@ client = MongoClient("mongodb+srv://yalfan22:yale2004@cluster0.qszrw.mongodb.net
 
 db = client.pairs_trading
 
-collections = []
-symbols = []
-for i in db.list_collection_names():
-    symbols.append(i.upper() + "-USD")
-    collections.append(db[i])
-
-coins = {symbols[i]: collections[i] for i in range(len(symbols))}
-symbols_dict = {symbols[i]: db.list_collection_names()[i] for i in range(len(symbols))}
-
 
 def update_csv_db(symbol, lastdate):
+    coins = create_symbols_coins_collections()[1]
     coin = coins[symbol]
 
     yahoo_financials = YahooFinancials(symbol)
     today = (datetime.datetime.today() - datetime.timedelta(days=1)).strftime('%Y-%m-%d')
     lastdate = (lastdate + datetime.timedelta(days=1)).strftime('%Y-%m-%d')
 
-    data = yahoo_financials.get_historical_price_data("2022-05-17", today, "daily")
+    data = yahoo_financials.get_historical_price_data(lastdate, today, "daily")
 
     df = pd.DataFrame(data[symbol]['prices'])
     # df = df.drop('date', axis=1).set_index('formatted_date')
@@ -94,7 +86,20 @@ def update_all():
             print("updated %s" % file_name)
 
 
+def create_symbols_coins_collections():
+    collections = []
+    symbols = []
+    for i in db.list_collection_names():
+        symbols.append(i.upper() + "-USD")
+        collections.append(db[i])
+
+    coins = {symbols[i]: collections[i] for i in range(len(symbols))}
+    return symbols, coins
+
+
 if __name__ == "__main__":
+    symbols = create_symbols_coins_collections()[0]
+    coins = create_symbols_coins_collections()[1]
     # we set which pair we want to retrieve data for
     today = (datetime.datetime.today() - datetime.timedelta(days=1)).strftime('%Y-%m-%d')
     for symbol in symbols:

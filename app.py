@@ -111,10 +111,8 @@ def backtest():
         starting_equity = float(request.args['starting_equity'])
         # bt_params = ma_period, std_period, max_dur, entry_threshold, exit_threshold, sl_threshold, starting_equity
     except KeyError:
-        print("it didn't work :(")
         pass
     else:
-        print("it worked!")
         bt_params = ma_period, std_period, max_dur, entry_threshold, exit_threshold, sl_threshold, starting_equity
 
     avg1 = get_data(start_date, end_date, crypto_one)[0]

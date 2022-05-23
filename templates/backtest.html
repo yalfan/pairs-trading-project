@@ -10,6 +10,50 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     </head>
 
+    <style>
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            font-size: .8em;
+            text-align: left;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            font-weight: bold;
+            padding-top: .5rem;
+            padding-bottom: .5rem;
+        }
+
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 300px;
+            background-color: #B0B0B0;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px 0;
+            position: absolute;
+            z-index: 1;
+            top: 150%;
+            left: 50%;
+            margin-left: -150px;
+            padding: 3px;
+        }
+
+        .tooltip .tooltiptext::after {
+            content: "";
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: transparent transparent #B0B0B0 transparent;
+        }
+
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+        }
+    </style>
+
     <body>
         {% extends "layout.html" %}
         {% block content %}
@@ -24,77 +68,6 @@
             <div class="navigation-container">
 
                 <div class="custom-grid-1">
-                    <!--
-                    <select id="crypto_one" name="crypto_one" required>
-                        <option value="" disabled>Select currency 1</option>
-                        {% if crypto_one == 'btc' %}
-                        <option value="btc" selected>Bitcoin</option>
-                        <option value="eth">Ethereum</option>
-                        <option value="ltc">Litecoin</option>
-                        <option value="bch">Bitcoin Cash</option>
-                        <option value="xrp">Ripple</option>
-                        {% elif crypto_one == 'eth' %}
-                        <option value="btc">Bitcoin</option>
-                        <option value="eth" selected>Ethereum</option>
-                        <option value="ltc">Litecoin</option>
-                        <option value="bch">Bitcoin Cash</option>
-                        <option value="xrp">Ripple</option>
-                        {% elif crypto_one == 'ltc' %}
-                        <option value="btc">Bitcoin</option>
-                        <option value="eth">Ethereum</option>
-                        <option value="ltc" selected>Litecoin</option>
-                        <option value="bch">Bitcoin Cash</option>
-                        <option value="xrp">Ripple</option>
-                        {% elif crypto_one == 'bch' %}
-                        <option value="btc">Bitcoin</option>
-                        <option value="eth">Ethereum</option>
-                        <option value="ltc">Litecoin</option>
-                        <option value="bch" selected>Bitcoin Cash</option>
-                        <option value="xrp">Ripple</option>
-                        {% elif crypto_one == 'xrp' %}
-                        <option value="btc">Bitcoin</option>
-                        <option value="eth">Ethereum</option>
-                        <option value="ltc" >Litecoin</option>
-                        <option value="bch">Bitcoin Cash</option>
-                        <option value="xrp" selected>Ripple</option>
-                        {% endif %}
-                    </select>
-
-                    <select id="crypto_two" name="crypto_two" required>
-                    <option value="" disabled selected>Select currency 2</option>
-                        {% if crypto_two == 'btc' %}
-                        <option value="btc" selected>Bitcoin</option>
-                        <option value="eth">Ethereum</option>
-                        <option value="ltc">Litecoin</option>
-                        <option value="bch">Bitcoin Cash</option>
-                        <option value="xrp">Ripple</option>
-                        {% elif crypto_two == 'eth' %}
-                        <option value="btc">Bitcoin</option>
-                        <option value="eth" selected>Ethereum</option>
-                        <option value="ltc">Litecoin</option>
-                        <option value="bch">Bitcoin Cash</option>
-                        <option value="xrp">Ripple</option>
-                        {% elif crypto_two == 'ltc' %}
-                        <option value="btc">Bitcoin</option>
-                        <option value="eth">Ethereum</option>
-                        <option value="ltc" selected>Litecoin</option>
-                        <option value="bch">Bitcoin Cash</option>
-                        <option value="xrp">Ripple</option>
-                        {% elif crypto_two == 'bch' %}
-                        <option value="btc">Bitcoin</option>
-                        <option value="eth">Ethereum</option>
-                        <option value="ltc">Litecoin</option>
-                        <option value="bch" selected>Bitcoin Cash</option>
-                        <option value="xrp">Ripple</option>
-                        {% elif crypto_two == 'xrp' %}
-                        <option value="btc">Bitcoin</option>
-                        <option value="eth">Ethereum</option>
-                        <option value="ltc" >Litecoin</option>
-                        <option value="bch">Bitcoin Cash</option>
-                        <option value="xrp" selected>Ripple</option>
-                        {% endif %}
-                    </select>
-                    -->
 
                     <select id="crypto_one" name="crypto_one" required>
                         <option value="" disabled selected>Select currency 1</option>
@@ -137,13 +110,13 @@
                 Stop/Loss threshold
                 -->
                 <div class="custom-grid-3">
-                    <label for="ma_period">Moving Average Period:</label>
+                    <div class="tooltip">Moving Average Period:<span class="tooltiptext">Range: 10-100 (days)</span></div>
                     <input type="number" id="ma_period" name="ma_period" value="{{bt_params[0]}}" min="10" max="100">
 
-                    <label for="std_period">Standard Deviation Period:</label>
+                    <div class="tooltip">Standard Deviation Period:<span class="tooltiptext">Range: 10-100 (days)</span></div>
                     <input type="number" id="std_period" name="std_period" value="{{bt_params[1]}}" min="10" max="100">
 
-                    <label for="max_dur">Maximum Trading Duration:</label>
+                    <div class="tooltip">Maximum Trading Duration:<span class="tooltiptext">Close position after period passes; Range: 0-100 (days); If 0, no maximum trading duration</span></div>
                     <input type="number" id="max_dur" name="max_dur" value="{{bt_params[2]}}" min="0" max="100">
 
 

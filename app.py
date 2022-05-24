@@ -152,8 +152,8 @@ def analyze():
 
     avg1 = get_data(start_date, end_date, crypto_one)[0]
     avg2 = get_data(start_date, end_date, crypto_two)[0]
-    print(len(avg1))
-    print(len(avg2))
+    # print(len(avg1))
+    # print(len(avg2))
     correlation = find_correlation(avg1, avg2)
     cointegration = find_cointegration(avg1, avg2)
     final_df = find_best_pairs(start_date, end_date)

@@ -17,8 +17,8 @@ def find_best_pairs(date1, date2):
         for j in range(i+1, len(coin_symbols)):
             prices1 = np.array(get_data(date1, date2, coin_symbols[i])[0])
             prices2 = np.array(get_data(date1, date2, coin_symbols[j])[0])
-            print("prices 1 %s %s" % (len(prices1), coin_symbols[i]))
-            print("prices 2 %s %s" % (len(prices2), coin_symbols[j]))
+            # print("prices 1 %s %s" % (len(prices1), coin_symbols[i]))
+            # print("prices 2 %s %s" % (len(prices2), coin_symbols[j]))
             values_to_return.append([coin_symbols[i], coin_symbols[j],
                                      find_correlation(prices1, prices2),
                                      find_cointegration(prices1, prices2)])
@@ -79,6 +79,7 @@ def get_data(date1, date2, coin_str):
     lows.reverse()
     closes.reverse()
     volumes.reverse()"""
+    print(len(average_prices))
     return average_prices, opens, highs, lows, closes, volumes, open_interest
 
 
@@ -102,6 +103,7 @@ def get_data_dataframe(d1, d2, coin_str):
     return df
 
 
+"""
 def auto_update_csv(coin_str):
     coins = create_collections_coins()
     coin = coins[coin_str]
@@ -113,17 +115,20 @@ def auto_update_csv(coin_str):
     print(coin_str)
     if last_date.strftime('%Y-%m-%d') != yesterday and first_date.strftime("%Y-%m-%d") != yesterday:
         if coin_str in ['btc', 'eth', 'bch', 'xrp', 'ltc']:
-            print("updated %s date!" % coin_str)
-            coin_symbol = coin_str.upper() + "-USD"
-            update_csv_db(coin_symbol, last_date)
+            # print("updated %s date!" % coin_str)
+            # coin_symbol = coin_str.upper() + "-USD"
+            # update_csv_db(coin_symbol, last_date)
+            update_all()
+"""
 
 
 def check_dates(coin_str1, coin_str2, start_date, end_date):
     coins = create_collections_coins()
     end_date = datetime.datetime.strptime(end_date, "%Y-%m-%d").date()
     start_date = datetime.datetime.strptime(start_date, "%Y-%m-%d").date()
-    auto_update_csv(coin_str1)
-    auto_update_csv(coin_str2)
+    # auto_update_csv(coin_str1)
+    # auto_update_csv(coin_str2)
+    update_all()
     coin1 = coins[coin_str1]
     coin2 = coins[coin_str2]
     last_date1 = coin1.find().limit(1).sort([('$natural', -1)])[0]['Date'].date()

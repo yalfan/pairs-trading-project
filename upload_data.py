@@ -24,6 +24,7 @@ def update_csv_db(symbol, lastdate):
     # df = df.drop('date', axis=1).set_index('formatted_date')
     # df.index.names = ['date']
     df.rename(columns={"date": "unix", "formatted_date": "date"}, inplace=True)
+    sheet_name = 'data/%s_dailydata.csv' % symbol
     data_to_upload = []
     for index, row in df.iterrows():
         date = row['date']
@@ -42,7 +43,6 @@ def update_csv_db(symbol, lastdate):
         }
         data_to_upload.append(element)
     coin.insert_many(data_to_upload)
-    print("updated data uploaded")
     df.to_csv('data/%s_dailydata.csv' % symbol,mode='a', index=False, header=False)
 
 
@@ -68,22 +68,18 @@ def upload_csvs(sheet, coin):
 
 
 def update_all():
+    symbols = create_symbols_coins_collections()[0]
+    coins = create_symbols_coins_collections()[1]
     today = (datetime.datetime.today() - datetime.timedelta(days=1)).strftime('%Y-%m-%d')
     for symbol in symbols:
         if symbol not in ['BTC-USD', 'ETH-USD', 'BCH-USD', 'XRP-USD', 'LTC-USD']:
             continue
-        file_name = 'data/%s_dailydata.csv' % symbol
-        sheet = pd.read_csv(file_name)
-        with open(file_name, "r") as f1:
-            last_date = ""
-            last_line = f1.readlines()[-1]
-            for i in range(-11, -1, 1):
-                last_date += last_line[i]
+        coin = coins[symbol]
+        last_date = coin.find().limit(1).sort([('$natural', -1)])[0]['Date'].date().strftime("%Y-%m-%d")
         if last_date != today:
             print(last_date, today)
-            last_date = datetime.datetime.strptime(last_date, "%Y-%m-%d")
-            update_csv_db(symbol, last_date)
-            print("updated %s" % file_name)
+            update_csv_db(symbol, datetime.datetime.strptime(last_date, "%Y-%m-%d"))
+            print("updated symbol")
 
 
 def create_symbols_coins_collections():

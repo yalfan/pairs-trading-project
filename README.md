@@ -1,8 +1,8 @@
 # Pairs Trading Lab
 Team Members: Yale Fang, Eric Kim, Kyle Lee
 
-A web app 3D virtual art museum for the display of various students’ works from current and previous years
-Hosted on Heroku, url: https://bcavam.herokuapp.com/
+A web app for graphing, analyzing, and backtesting cryptocurrency pairs. 
+Hosted on Heroku at: https://pairs-trading-project.herokuapp.com/
 
 # How to Setup Project
 

@@ -3,7 +3,12 @@ import sys
 from pymongo import MongoClient
 from upload_data import *
 
-client = MongoClient("mongodb+srv://erikim22:KIm3kEf1JKMOsbXx@cluster0.qszrw.mongodb.net/test", connect=False)
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+DATABASE_ACCESS = os.getenv("DATABASE_ACCESS")
+client = MongoClient(DATABASE_ACCESS)
 db = client.pairs_trading
 
 

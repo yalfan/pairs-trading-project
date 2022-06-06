@@ -1,7 +1,11 @@
 from pymongo import MongoClient
 
-client = MongoClient("mongodb+srv://yalfan22:yale2004@cluster0.qszrw.mongodb.net/test")
+import os
+from dotenv import load_dotenv
 
+load_dotenv()
+DATABASE_ACCESS = os.getenv("DATABASE_ACCESS")
+client = MongoClient(DATABASE_ACCESS)
 db = client.pairs_trading
 
 btc = db.btc
@@ -15,4 +19,3 @@ coins = [btc, eth, ltc, bch, xrp]
 for i in range(len(coins)):
     print(type(coins[i]))
     coins[i].delete_many({})
-

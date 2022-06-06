@@ -3,10 +3,12 @@ from pymongo import MongoClient
 import numpy as np
 import datetime
 from yahoofinancials import YahooFinancials
+import os
+from dotenv import load_dotenv
 
-
-client = MongoClient("mongodb+srv://yalfan22:yale2004@cluster0.qszrw.mongodb.net/test", connect=False)
-
+load_dotenv()
+DATABASE_ACCESS = os.getenv("DATABASE_ACCESS")
+client = MongoClient(DATABASE_ACCESS)
 db = client.pairs_trading
 
 
@@ -111,8 +113,8 @@ if __name__ == "__main__":
         if last_date != today:
             print(last_date, today)
             last_date = datetime.datetime.strptime(last_date, "%Y-%m-%d")
-            # update_csv_db(symbol, last_date)
-            # print("updated %s" % file_name)
+            #update_csv_db(symbol, last_date)
+            #print("updated %s" % file_name)
 
         upload_csvs(sheet, coins[symbol])
         print("uploaded %s" % symbol)

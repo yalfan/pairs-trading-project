@@ -1,8 +1,6 @@
 import pandas as pd
 from pymongo import MongoClient
-import numpy as np
 import datetime
-import time
 
 import requests
 import json

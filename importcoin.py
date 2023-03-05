@@ -1,6 +1,3 @@
-import pandas as pd
-import sys
-from pymongo import MongoClient
 from upload_data import *
 
 import os

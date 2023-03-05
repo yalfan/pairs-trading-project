@@ -148,13 +148,13 @@
     var myChart2 = new Chart(ctx, {
         type: 'line',
         data: {
-        labels: {{ labels|tojson }},
-        datasets: [
-            {
-            data: {{ values1|tojson }},
-            label: {{ crypto_one|tojson }},
-            borderColor: "#3e95cd",
-            fill: false,
+            labels: {{ labels|tojson }},
+            datasets: [
+                {
+                data: {{ values1|tojson }},
+                label: {{ crypto_one|tojson }},
+                borderColor: "#3e95cd",
+                fill: false,
             }]
         },
         options: {

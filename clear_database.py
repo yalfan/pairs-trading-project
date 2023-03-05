@@ -17,5 +17,4 @@ xrp = db.xrp
 coins = [btc, eth, ltc, bch, xrp]
 
 for i in range(len(coins)):
-    print(type(coins[i]))
     coins[i].delete_many({})

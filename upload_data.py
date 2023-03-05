@@ -1,6 +1,5 @@
 import pandas as pd
 from pymongo import MongoClient
-import numpy as np
 import datetime
 from yahoofinancials import YahooFinancials
 import os

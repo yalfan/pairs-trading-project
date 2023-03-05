@@ -1,9 +1,6 @@
-import pandas as pd
 import numpy as np
-from pymongo import MongoClient
 import datetime
 import statsmodels.tsa.stattools as ts
-from statsmodels.tsa.stattools import coint
 
 
 def get_values_pair(date1, date2, initial, df1, df2):

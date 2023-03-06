@@ -449,7 +449,7 @@ def update_csv_db(symbol, lastdate):
     # df = df.drop('date', axis=1).set_index('formatted_date')
     # df.index.names = ['date']
     df.rename(columns={"date": "unix", "formatted_date": "date"}, inplace=True)
-    sheet_name = 'data/%s_dailydata.csv' % symbol
+    sheet_name = 'ptp/data/%s_dailydata.csv' % symbol
     data_to_upload = []
     for index, row in df.iterrows():
         date = row['date']
@@ -468,7 +468,7 @@ def update_csv_db(symbol, lastdate):
         }
         data_to_upload.append(element)
     coin.insert_many(data_to_upload)
-    df.to_csv('data/%s_dailydata.csv' % symbol,mode='a', index=False, header=False)
+    df.to_csv('ptp/data/%s_dailydata.csv' % symbol,mode='a', index=False, header=False)
 
 
 def upload_csvs(sheet, coin):
@@ -524,7 +524,7 @@ def update_db():
     for symbol in symbols:
         if symbol not in ['BTC-USD', 'ETH-USD', 'BCH-USD', 'XRP-USD', 'LTC-USD']:
             continue
-        file_name = 'data/%s_dailydata.csv' % symbol
+        file_name = 'ptp/data/%s_dailydata.csv' % symbol
         sheet = pd.read_csv(file_name)
         with open(file_name, "r") as f1:
             last_date = ""
@@ -749,7 +749,7 @@ def read_update():
     for i in data:
         fetch_daily_data(symbol=i)
         coin_symbol = i.replace('/', '')
-        file_name = 'data/%s_dailydata.csv' % coin_symbol
+        file_name = 'ptp/data/%s_dailydata.csv' % coin_symbol
         sheet = pd.read_csv(file_name)
         upload(sheet, coin_symbol, coins[coin_symbol])
 

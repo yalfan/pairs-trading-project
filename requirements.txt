@@ -1,9 +1,9 @@
 Flask
-numpy==1.23.3
-pandas==1.4.4
-pymongo==4.2.0
+numpy
+pandas
+pymongo
 python-dotenv>=0.19.2
 Requests>=2.27.1
-statsmodels==0.13.2
+statsmodels
 Werkzeug==2.3.7
-yahoofinancials==1.6
+yahoofinancials

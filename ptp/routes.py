@@ -6,7 +6,7 @@ import time
 
 from ptp.helpers import *
 
-
+one_year_ago = (datetime.datetime.today() - datetime.timedelta(days=365)).date()
 now = (datetime.datetime.today() - datetime.timedelta(days=1)).date()
 
 
@@ -14,7 +14,7 @@ now = (datetime.datetime.today() - datetime.timedelta(days=1)).date()
 def home():
     coins = db.list_collection_names()
 
-    return render_template('home.html', now=now, coins=coins)
+    return render_template('home.html', now=now, oya=one_year_ago, coins=coins)
 
 
 @app.route('/about/')

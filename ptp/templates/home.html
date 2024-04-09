@@ -33,13 +33,6 @@
 
                     <select id="crypto_two" name="crypto_two" required>
                         <option value="" disabled selected>Select currency 2</option>
-                        <!--
-                        <option value="btc">Bitcoin</option>
-                        <option value="eth">Ethereum</option>
-                        <option value="ltc">Litecoin</option>
-                        <option value="bch">Bitcoin Cash</option>
-                        <option value="xrp">Ripple</option>
-                        -->
                         {% for coin in coins %}
                             <option value="{{coin}}">{{coin.upper()}}</option>"
                         {% endfor %}
@@ -56,14 +49,13 @@
                 <div class="custom-grid-2">
                     <label for="start_date">Start Period:</label>
                     <input type="date" id="start_date" name="start_date"
-                       value="2020-06-06"
+                       value="{{ oya }}"
                        min="2018-01-01" max="{{now}}">
 
                     <label for="end_date">End Period:</label>
                     <input type="date" id="end_date" name="end_date"
                         value="{{now}}"
                         min="2018-01-02" max="{{now}}">
-
                     <button>Submit</button>
 
                 </div>

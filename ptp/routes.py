@@ -5,6 +5,7 @@ from ptp import app
 import time
 
 from ptp.helpers import *
+from ptp.backtest import *
 
 one_year_ago = (datetime.datetime.today() - datetime.timedelta(days=365)).date()
 now = (datetime.datetime.today() - datetime.timedelta(days=1)).date()

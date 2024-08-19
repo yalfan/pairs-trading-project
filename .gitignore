@@ -1,5 +1,5 @@
 venv
 __pycache__
-test.py
+reset_db.py
 .env
 .idea

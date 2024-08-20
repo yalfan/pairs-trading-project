@@ -7,3 +7,4 @@ Requests>=2.27.1
 statsmodels==0.13.2
 Werkzeug>=3.0.3
 yahoofinancials==1.6
+gunicorn

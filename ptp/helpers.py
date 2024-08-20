@@ -359,7 +359,7 @@ def check_dates(coin_str1, coin_str2, start_date, end_date):
     start_date = datetime.datetime.strptime(start_date, "%Y-%m-%d").date()
     # auto_update_csv(coin_str1)
     # auto_update_csv(coin_str2)
-    update_all()
+    # update_all()
     coin1 = coins[coin_str1]
     coin2 = coins[coin_str2]
     last_date1 = coin1.find().limit(1).sort([('$natural', -1)])[0]['Date'].date()

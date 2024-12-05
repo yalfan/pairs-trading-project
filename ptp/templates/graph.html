@@ -20,7 +20,7 @@
     <h1>Results</h1>
     {% endif %}
 
-    <form action="{{ url_for('handle_data') }}" method="POST">
+    <form action="{{ url_for('handle_data') }}">
         <div class="navigation-container">
             <div class="custom-grid">
                 <!--
@@ -135,7 +135,19 @@
                     value="{{ end_date }}"
                     min="2018-01-02" max="{{now}}">
 
-                <button>Submit</button>
+                <button onclick="return validate();">Submit</button>
+
+                <script>
+                    function validate(){
+                        var start = new Date(document.getElementById('start_date').value);
+                        var end = new Date(document.getElementById('end_date').value);
+                        if (start > end) {
+                            alert('End date must be after start date!');
+                            return false;
+                        }
+                        return true;
+                    }
+                </script>
             </div>
 
         </div>
@@ -144,8 +156,9 @@
     <canvas id="myChart1" ></canvas>
 
     <script>
+    console.log({{ values1|tojson }});
     var ctx = document.getElementById('myChart1').getContext('2d');
-    var myChart2 = new Chart(ctx, {
+    var myChart1 = new Chart(ctx, {
         type: 'line',
         data: {
             labels: {{ labels|tojson }},
@@ -168,6 +181,8 @@
             text: 'Price History of {{ crypto_one|tojson }}'
             }}
     });
+    console.log({{ values1|tojson }});
+    myChart1.update();
     </script>
 
     <canvas id="myChart2" ></canvas>
@@ -197,13 +212,15 @@
             text: 'Price History of {{ crypto_two|tojson }}'
             }}
     });
+
+    myChart2.update();
     </script>
 
     <canvas id="myChart3" ></canvas>
 
     <script>
     var ctx = document.getElementById('myChart3').getContext('2d');
-    new Chart(ctx, {
+    var myChart3 = new Chart(ctx, {
         type: 'line',
         data: {
             labels: {{ labels|tojson }},
@@ -258,6 +275,8 @@
             }
         }
     });
+
+    myChart3.update();
     </script>
 
 

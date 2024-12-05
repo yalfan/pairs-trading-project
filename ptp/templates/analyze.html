@@ -20,7 +20,7 @@
     <h1>Results</h1>
     {% endif %}
 
-    <form action="{{ url_for('handle_data') }}" method="POST">
+    <form action="{{ url_for('handle_data') }}">
         <div class="navigation-container">
 
             <div class="custom-grid">
@@ -137,7 +137,22 @@
                     value="{{ end_date }}"
                     min="2018-01-02" max="{{now}}">
 
-                <button>Submit</button>
+                <script>
+                    function validate(){
+                        var start = new Date(document.getElementById('start_date').value);
+                        var end = new Date(document.getElementById('end_date').value);
+                        if (start > end) {
+                            alert('End date must be after start date!');
+                            return false;
+                        }
+                        return true;
+                    }
+                </script>
+                {% with error = get_flashed_messages() %}
+                    {% if error %}
+                        <small style="color: red; grid-column: span 2;">{{ error[0] }}</small>
+                    {% endif %}
+                {% endwith %}
 
             </div>
         </div>

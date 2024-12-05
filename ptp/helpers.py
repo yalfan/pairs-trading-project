@@ -248,8 +248,6 @@ def find_best_pairs(date1, date2):
         for j in range(i+1, len(coin_symbols)):
             prices1 = np.array(get_data(date1, date2, coin_symbols[i])[0])
             prices2 = np.array(get_data(date1, date2, coin_symbols[j])[0])
-            # print("prices 1 %s %s" % (len(prices1), coin_symbols[i]))
-            # print("prices 2 %s %s" % (len(prices2), coin_symbols[j]))
             values_to_return.append([coin_symbols[i], coin_symbols[j],
                                      find_correlation(prices1, prices2),
                                      find_cointegration(prices1, prices2)])
@@ -295,7 +293,10 @@ def get_data(date1, date2, coin_str):
     # d1 = '{d.month} {d.day} {d.year}'.format(d=d1)
     d2 = datetime.datetime.fromisoformat(date2)
     # d2 = '{d.month} {d.day} {d.year}'.format(d=d2)
-    data_range = coin.find({'Date': {"$gte": d1, "$lte": d2}})
+    data_range = list(coin.find({'Date': {"$gte": d1, "$lte": d2}}).sort('Date', 1))
+    df = pd.DataFrame(data_range)
+    data_range = df.drop_duplicates().to_dict(orient='records')
+
     for i in data_range:
         average_prices.append(i['Average'])
         opens.append(i['Open'])
@@ -310,7 +311,6 @@ def get_data(date1, date2, coin_str):
     lows.reverse()
     closes.reverse()
     volumes.reverse()"""
-    print(len(average_prices))
     return average_prices, opens, highs, lows, closes, volumes, open_interest
 
 
@@ -364,8 +364,8 @@ def check_dates(coin_str1, coin_str2, start_date, end_date):
     coin2 = coins[coin_str2]
     last_date1 = coin1.find().limit(1).sort([('$natural', -1)])[0]['Date'].date()
     last_date2 = coin2.find().limit(1).sort([('$natural', -1)])[0]['Date'].date()
-    first_date1 = coin1.find()[0]['Date'].date()
-    first_date2 = coin2.find()[0]['Date'].date()
+    first_date1 = coin1.find().sort('Date', 1)[0]['Date'].date()
+    first_date2 = coin2.find().sort('Date', 1)[0]['Date'].date()
     if last_date1 < end_date:
         end_date = last_date1
     if last_date2 < end_date:
@@ -383,7 +383,6 @@ def create_collections_coins():
         collections.append(db[i])
     coins = {db.list_collection_names()[i]: collections[i] for i in range(len(db.list_collection_names()))}
     return coins
-
 
 
 def fetch_daily_data(symbol):

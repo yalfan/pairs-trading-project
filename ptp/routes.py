@@ -120,21 +120,21 @@ def graph():
     title = crypto_one + "-" + crypto_two + " Graph Results"
 
     dates = get_dates(start_date, end_date)
-    avg1 = get_data(start_date, end_date, crypto_one)[4]
-    avg2 = get_data(start_date, end_date, crypto_two)[4]
+    avg1 = get_data(start_date, end_date, crypto_one)[0]
+    avg2 = get_data(start_date, end_date, crypto_two)[0]
 
     return render_template('graph.html', coins=coins, title=title, crypto_one=crypto_one, crypto_two=crypto_two, function="Graph",
                            labels=get_dates_string_daily(dates), values1=avg1, values2=avg2,
                            now=now, start_date=start_date, end_date=end_date)
 
 
-@app.route('/handle_data', methods=['POST'])
+@app.route('/handle_data')
 def handle_data():
-    crypto_one = request.form['crypto_one']
-    crypto_two = request.form['crypto_two']
-    function = request.form['function']
-    start_date = request.form['start_date']
-    end_date = request.form['end_date']
+    crypto_one = request.args.get("crypto_one")
+    crypto_two = request.args.get("crypto_two")
+    function = request.args.get("function")
+    start_date = request.args.get("start_date")
+    end_date = request.args.get("end_date")
     """
     ma_period
     std_period
@@ -150,6 +150,9 @@ def handle_data():
     Exit threshold
     Stop/Loss threshold
     """
+    if datetime.datetime.strptime(end_date, "%Y-%m-%d") < datetime.datetime.strptime(start_date, "%Y-%m-%d"):
+        flash("End date must be after start date!")
+        return redirect(request.referrer)
 
     return results(crypto_one, crypto_two, function, start_date, end_date)
 

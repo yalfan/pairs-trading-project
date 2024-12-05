@@ -13,7 +13,7 @@
     <h1>Pairs Trading Program</h1>
 
     <div class="home">
-        <form action="{{ url_for('handle_data') }}" method="POST">
+        <form action="{{ url_for('handle_data') }}">
             <div class="navigation-container">
 
                 <div class="custom-grid">
@@ -56,7 +56,24 @@
                     <input type="date" id="end_date" name="end_date"
                         value="{{now}}"
                         min="2018-01-02" max="{{now}}">
-                    <button>Submit</button>
+                    <button onclick="return validate();">Submit</button>
+
+                    <script>
+                        function validate(){
+                            var start = new Date(document.getElementById('start_date').value);
+                            var end = new Date(document.getElementById('end_date').value);
+                            if (start > end) {
+                                alert('End date must be after start date!');
+                                return false;
+                            }
+                            return true;
+                        }
+                    </script>
+                    {% with error = get_flashed_messages() %}
+                        {% if error %}
+                            <small style="color: red; grid-column: span 2;">{{ error[0] }}</small>
+                        {% endif %}
+                    {% endwith %}
 
                 </div>
             </div>

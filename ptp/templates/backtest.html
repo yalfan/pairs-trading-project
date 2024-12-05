@@ -179,14 +179,19 @@
 
                     <script>
                         function validate(){
+                            var start = new Date(document.getElementById('start_date').value);
+                            var end = new Date(document.getElementById('end_date').value);
                             var entry = parseInt(document.getElementById('entry_threshold').value);
                             var exit = parseInt(document.getElementById('exit_threshold').value);
                             if (exit > entry){
                                 alert('Entry threshold must be greater than exit threshold ');
                                 return false;
                             }
+                            if (start > end) {
+                                alert('End date must be after start date!');
+                                return false;
+                            }
                             return true;
-
                         }
                     </script>
 
